@@ -161,90 +161,90 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards (2x2 grid on mobile) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         
-        <div className="glass-panel p-4 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-xs text-sky-400 font-semibold mb-2">
-            <span>Taux de Dépouillement</span>
-            <CheckCircle2 className="w-4 h-4 text-sky-400" />
+        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-950/20 to-slate-900/50">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-sky-400 font-semibold mb-1 sm:mb-2">
+            <span>Dépouillement</span>
+            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400" />
           </div>
-          <div className="text-2xl font-black text-white">
+          <div className="text-lg sm:text-2xl font-black text-white">
             {data?.depouilles_count || 0} / {data?.total_bureaux || 0}
           </div>
-          <div className="text-xs text-slate-400 mt-1">
-            Bureaux dépouillés ({data?.taux_depouillement || 0}%)
+          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+            Bureaux ({data?.taux_depouillement || 0}%)
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-xs text-blue-400 font-semibold mb-2">
-            <span>Nombre de Votants</span>
-            <Users className="w-4 h-4 text-blue-400" />
+        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-950/20 to-slate-900/50">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-blue-400 font-semibold mb-1 sm:mb-2">
+            <span>Votants</span>
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
           </div>
-          <div className="text-2xl font-black text-white">
+          <div className="text-lg sm:text-2xl font-black text-white">
             {(data?.total_votants || 0).toLocaleString()}
           </div>
-          <div className="text-xs text-slate-400 mt-1">
-            Participation : <strong className="text-blue-300">{data?.taux_participation || 0}%</strong> (sur {data?.total_inscrits || 0})
+          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
+            Part. : <strong className="text-blue-300">{data?.taux_participation || 0}%</strong>
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-2">
-            <span>Suffrages Exprimés</span>
-            <Vote className="w-4 h-4 text-emerald-400" />
+        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-slate-900/50">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-emerald-400 font-semibold mb-1 sm:mb-2">
+            <span>Exprimés</span>
+            <Vote className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-black text-emerald-400">
+          <div className="text-lg sm:text-2xl font-black text-emerald-400">
             {(data?.total_exprimes || 0).toLocaleString()}
           </div>
-          <div className="text-xs text-slate-400 mt-1">
-            Exprimés valides comptabilisés
+          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+            Suffrages valides
           </div>
         </div>
 
-        <div className="glass-panel p-4 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-xs text-amber-400 font-semibold mb-2">
-            <span>Parti en Tête</span>
-            <Award className="w-4 h-4 text-amber-400" />
+        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-slate-900/50">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs text-amber-400 font-semibold mb-1 sm:mb-2">
+            <span>En Tête</span>
+            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
           </div>
-          <div className="text-xl font-black text-amber-300 truncate">
-            {topParty ? `${topParty.code} (${topParty.total_voix} voix)` : 'Aucun vote'}
+          <div className="text-base sm:text-xl font-black text-amber-300 truncate">
+            {topParty ? `${topParty.code} (${topParty.total_voix})` : 'Aucun'}
           </div>
-          <div className="text-xs text-slate-400 mt-1 truncate">
-            {topParty?.nom_parti || 'En attente des PV'}
+          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
+            {topParty?.nom_parti || 'En attente'}
           </div>
         </div>
 
       </div>
 
-      {/* Main Aggregation Table */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+      {/* Main Aggregation Table - Optimized for Smartphone */}
+      <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3 sm:space-y-4">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <h3 className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-sky-400" />
-            Résultats Cumulés des Voix par Parti Politique
+            Classement des Partis Politiques
           </h3>
           
           <input
             type="text"
-            placeholder="Filtrer un parti, candidat..."
+            placeholder="Rechercher un parti..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 w-full sm:w-64"
           />
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-1 sm:mx-0">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px] tracking-wider bg-slate-900/60">
-                <th className="p-3">Rang</th>
-                <th className="p-3">Parti Politique</th>
-                <th className="p-3">Tête de Liste</th>
-                <th className="p-3 text-right">Total Voix</th>
-                <th className="p-3 text-right">Pourcentage</th>
+                <th className="p-2 sm:p-3 w-10 text-center">#</th>
+                <th className="p-2 sm:p-3">Parti</th>
+                <th className="p-2 sm:p-3 hidden md:table-cell">Tête de Liste</th>
+                <th className="p-2 sm:p-3 text-right">Voix</th>
+                <th className="p-2 sm:p-3 text-right">%</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-semibold text-slate-200">
@@ -256,45 +256,39 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                       ? 'bg-gradient-to-r from-sky-950/40 via-blue-950/20 to-slate-900/60 border-l-4 border-l-sky-400 shadow-md' 
                       : 'hover:bg-slate-900/40'
                   }`}>
-                    <td className="p-3 text-slate-400 font-bold">
+                    <td className="p-2 sm:p-3 text-center text-slate-400 font-extrabold text-xs sm:text-sm">
                       #{idx + 1}
                     </td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-2.5">
+                    <td className="p-2 sm:p-3">
+                      <div className="flex items-center gap-2">
                         <div 
-                          className="w-3.5 h-3.5 rounded-full flex-shrink-0" 
+                          className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full flex-shrink-0" 
                           style={{ backgroundColor: p.couleur_hex }}
                         ></div>
-                        <div>
-                          <div className="font-extrabold text-white text-xs flex items-center gap-1.5">
+                        <div className="min-w-0">
+                          <div className="font-black text-white text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
                             <span>{p.code}</span>
-                            <span className="font-normal text-slate-400">({p.sigle_arabe || p.nom_parti})</span>
                             {isPi && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
-                                ★ Parti de l'Istiqlal
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
+                                ★ PI
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400 truncate max-w-[240px]">
+                          <div className="text-[10px] text-slate-400 truncate max-w-[140px] sm:max-w-[240px]">
                             {p.nom_parti}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 font-medium">
+                    <td className="p-2 sm:p-3 hidden md:table-cell font-medium">
                       <span className={isPi ? "text-sky-200 font-bold" : "text-slate-300"}>
                         {p.tete_liste || 'Non renseigné'}
                       </span>
-                      {isPi && (
-                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 bg-sky-400/20 text-sky-300 border border-sky-400/30 rounded-md text-[9px] font-extrabold">
-                          Tête de Liste PI
-                        </span>
-                      )}
                     </td>
-                    <td className="p-3 text-right font-black text-white text-sm">
+                    <td className="p-2 sm:p-3 text-right font-black text-white text-xs sm:text-sm whitespace-nowrap">
                       {p.total_voix.toLocaleString()}
                     </td>
-                    <td className={`p-3 text-right font-bold ${isPi ? 'text-sky-300 font-black text-sm' : 'text-sky-400'}`}>
+                    <td className={`p-2 sm:p-3 text-right font-bold whitespace-nowrap ${isPi ? 'text-sky-300 font-black text-xs sm:text-sm' : 'text-sky-400 text-xs'}`}>
                       {p.pourcentage}%
                     </td>
                   </tr>
