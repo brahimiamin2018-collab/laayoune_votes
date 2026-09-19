@@ -451,6 +451,78 @@ export async function savePvResult({ bureau_id, votants = 0, nuls = 0, blancs = 
 }
 
 export async function getVotesAggregation({ commune = '' } = {}) {
+  if (isSupabaseConfigured()) {
+    const partis = await getPartisSupabase();
+    const bureaux = await getBureauxSupabase(commune);
+
+    const totalBureaux = bureaux.length;
+    let depouillesCount = 0;
+    let invalidesCount = 0;
+    let totalInscrits = 0;
+    let totalVotants = 0;
+    let totalExprimes = 0;
+    const pvIds = [];
+
+    bureaux.forEach(b => {
+      totalInscrits += (b.nombre_inscrits || 0);
+      if (b.has_pv && b.pv) {
+        depouillesCount++;
+        if (!b.pv.est_valide) invalidesCount++;
+        totalVotants += (b.pv.nombre_votants || 0);
+        totalExprimes += (b.pv.suffrages_exprimes || 0);
+        pvIds.push(b.pv.id);
+      }
+    });
+
+    let votesByPartyMap = {};
+    partis.forEach(p => { votesByPartyMap[p.id] = 0; });
+
+    if (pvIds.length > 0) {
+      const { data: vRows } = await supabase.from('votes_partis').select('parti_id, nombre_voix').in('pv_id', pvIds);
+      if (vRows) {
+        vRows.forEach(v => {
+          votesByPartyMap[v.parti_id] = (votesByPartyMap[v.parti_id] || 0) + (v.nombre_voix || 0);
+        });
+      }
+    }
+
+    let resultsByParty = partis.map(p => {
+      const totalVoix = votesByPartyMap[p.id] || 0;
+      const pct = totalExprimes > 0 ? parseFloat(((totalVoix / totalExprimes) * 100).toFixed(2)) : 0;
+      return {
+        id: p.id,
+        code: p.code,
+        nom_parti: p.nom_parti,
+        nom_arabe: p.nom_arabe,
+        sigle_arabe: p.sigle_arabe,
+        couleur_hex: p.couleur_hex,
+        tete_liste: p.tete_liste,
+        logo_icon: p.logo_icon,
+        total_voix: totalVoix,
+        pourcentage: pct,
+        sieges: 0
+      };
+    });
+
+    resultsByParty.sort((a, b) => b.total_voix - a.total_voix);
+
+    const tauxDepouillement = totalBureaux > 0 ? parseFloat(((depouillesCount / totalBureaux) * 100).toFixed(2)) : 0;
+    const tauxParticipation = totalInscrits > 0 ? parseFloat(((totalVotants / totalInscrits) * 100).toFixed(2)) : 0;
+
+    return {
+      commune: commune || 'ALL',
+      total_bureaux: totalBureaux,
+      depouilles_count: depouillesCount,
+      invalides_count: invalidesCount,
+      taux_depouillement: tauxDepouillement,
+      total_inscrits: totalInscrits,
+      total_votants: totalVotants,
+      total_exprimes: totalExprimes,
+      taux_participation: tauxParticipation,
+      results_by_party: resultsByParty
+    };
+  }
+
   await initDb();
 
   const partis = await getPartis();
