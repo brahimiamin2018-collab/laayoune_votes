@@ -11,7 +11,9 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "cors": "^2.8.5",
+    "dotenv": "^18.0.1",
     "express": "^4.19.2",
     "lucide-react": "^0.378.0",
     "react": "^18.3.1",

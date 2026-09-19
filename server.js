@@ -21,7 +21,9 @@ import {
   addUser,
   updateUser,
   deleteUser,
-  generateAccountsForBureaux
+  generateAccountsForBureaux,
+  exportCloudData,
+  importCloudData
 } from './database.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -211,6 +213,27 @@ app.post('/api/users/generate-all', async (req, res) => {
   }
 });
 
+// Cloud Data Sync Routes
+app.get('/api/depouillement/export-cloud', async (req, res) => {
+  try {
+    const data = await exportCloudData();
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="laayoune_votes_cloud_backup.json"');
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/depouillement/import-cloud', async (req, res) => {
+  try {
+    const result = await importCloudData(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ----------------------------------------------------
 // SERVIR LE FRONTEND (BUILD VITE DIST)
 // ----------------------------------------------------
@@ -227,6 +250,10 @@ if (fs.existsSync(distPath)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🚀 Application Autonome d'Assemblage des Votes Laâyoune lancée sur http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Application Autonome d'Assemblage des Votes Laâyoune lancée sur http://localhost:${PORT}`);
+  });
+}
+
+export default app;

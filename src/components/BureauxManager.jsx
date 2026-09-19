@@ -12,7 +12,7 @@ export default function BureauxManager() {
   const [editingBureau, setEditingBureau] = useState(null);
 
   const [codeBureau, setCodeBureau] = useState('');
-  const [commune, setCommune] = useState('Laâyoune');
+  const [commune, setCommune] = useState('Tan-Tan');
   const [centreVote, setCentreVote] = useState('');
   const [numeroBureau, setNumeroBureau] = useState('1');
   const [adresse, setAdresse] = useState('');
@@ -40,8 +40,8 @@ export default function BureauxManager() {
 
   const handleOpenAdd = () => {
     setEditingBureau(null);
-    setCodeBureau(`BV-LAY-${(bureaux.length + 1).toString().padStart(3, '0')}`);
-    setCommune('Laâyoune');
+    setCodeBureau(`BV-TAN-${(bureaux.length + 1).toString().padStart(3, '0')}`);
+    setCommune('Tan-Tan');
     setCentreVote('');
     setNumeroBureau((bureaux.length + 1).toString());
     setAdresse('');
@@ -119,7 +119,7 @@ export default function BureauxManager() {
         let addedCount = 0;
         for (const r of rows) {
           const code = r['Code Bureau'] || r['CODE_BUREAU'] || r['Code'] || `BV-IMP-${Math.floor(Math.random()*10000)}`;
-          const com = r['Commune'] || r['COMMUNE'] || 'Laâyoune';
+          const com = r['Commune'] || r['COMMUNE'] || 'Tan-Tan';
           const centre = r['Centre de Vote'] || r['CENTRE_VOTE'] || r['Centre'] || 'Centre de Vote';
           const num = r['Numéro Bureau'] || r['NUMERO_BUREAU'] || r['Num'] || 1;
           const inscrits = r['Nombre Inscrits'] || r['NOMBRE_INSCRITS'] || r['Inscrits'] || 450;
@@ -161,7 +161,7 @@ export default function BureauxManager() {
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Building2 className="w-5 h-5 text-sky-400" />
-            Bureaux de Vote - Circonscription de Laâyoune ({bureaux.length})
+            Bureaux de Vote - Circonscription de Tan-Tan ({bureaux.length})
           </h2>
           <p className="text-xs text-slate-400">
             Gestion de l'emplacement et des effectifs de tous les bureaux de vote.
@@ -178,10 +178,13 @@ export default function BureauxManager() {
               className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les Communes</option>
-              <option value="Laâyoune">Laâyoune Ville</option>
-              <option value="El Marsa">El Marsa</option>
-              <option value="Boucraa">Boucraa</option>
-              <option value="Dcheira">Dcheira</option>
+              <option value="Tan-Tan">Tan-Tan Ville</option>
+              <option value="El Ouatia">El Ouatia</option>
+              <option value="Abteh">Abteh</option>
+              <option value="Ben Khlil">Ben Khlil</option>
+              <option value="Chbika">Chbika</option>
+              <option value="Msied">Msied</option>
+              <option value="Tilemzoune">Tilemzoune</option>
             </select>
           </div>
 
@@ -305,12 +308,12 @@ export default function BureauxManager() {
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Code Bureau (ex: BV-LAY-001)</label>
+                  <label className="text-slate-400 font-medium">Code Bureau (ex: BV-TAN-001)</label>
                   <input
                     type="text"
                     value={codeBureau}
                     onChange={(e) => setCodeBureau(e.target.value)}
-                    placeholder="BV-LAY-001"
+                    placeholder="BV-TAN-001"
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold uppercase focus:outline-none focus:border-sky-500"
                     required
                   />
@@ -337,10 +340,13 @@ export default function BureauxManager() {
                   onChange={(e) => setCommune(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
                 >
-                  <option value="Laâyoune">Laâyoune</option>
-                  <option value="El Marsa">El Marsa</option>
-                  <option value="Boucraa">Boucraa</option>
-                  <option value="Dcheira">Dcheira</option>
+                  <option value="Tan-Tan">Tan-Tan</option>
+                  <option value="El Ouatia">El Ouatia</option>
+                  <option value="Abteh">Abteh</option>
+                  <option value="Ben Khlil">Ben Khlil</option>
+                  <option value="Chbika">Chbika</option>
+                  <option value="Msied">Msied</option>
+                  <option value="Tilemzoune">Tilemzoune</option>
                 </select>
               </div>
 

@@ -1,8 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import sqlite3Module from 'sqlite3';
+import { supabase, isSupabaseConfigured, getPartisSupabase, getBureauxSupabase, savePvSupabase } from './supabase_db.js';
 
-const sqlite3 = sqlite3Module.default || sqlite3Module;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dbPath = path.join(__dirname, 'depouillement_laayoune.db');
@@ -11,6 +10,8 @@ let db = null;
 
 async function getDb() {
   if (db) return db;
+  const sqlite3Module = await import('sqlite3');
+  const sqlite3 = sqlite3Module.default || sqlite3Module;
   return new Promise((resolve, reject) => {
     const d = new sqlite3.Database(dbPath, (err) => {
       if (err) reject(err);
@@ -116,16 +117,16 @@ export async function initDb() {
     const row = await getLocal(`SELECT COUNT(*) as count FROM PARTIS_POLITIQUES`);
     if (!row || row.count === 0) {
       const defaultPartis = [
-        { code: 'RNI', nom: 'Rassemblement National des Indépendants', nom_ar: 'التجمع الوطني للأحرار', sigle_ar: 'أحرار', couleur: '#0066B3', tete: 'Candidat RNI Laâyoune', ordre: 1 },
-        { code: 'PAM', nom: 'Parti Authenticité et Modernité', nom_ar: 'حزب الأصالة والمعاصرة', sigle_ar: 'أصالة', couleur: '#008080', tete: 'Candidat PAM Laâyoune', ordre: 2 },
-        { code: 'PI', nom: 'Parti de l\'Istiqlal', nom_ar: 'حزب الاستقلال', sigle_ar: 'استقلال', couleur: '#1E3A8A', tete: 'Candidat PI Laâyoune', ordre: 3 },
-        { code: 'USFP', nom: 'Union Socialiste des Forces Populaires', nom_ar: 'الاتحاد الاشتراكي للقوات الشعبية', sigle_ar: 'اتحاد اشتراكي', couleur: '#DC2626', tete: 'Candidat USFP Laâyoune', ordre: 4 },
-        { code: 'MP', nom: 'Mouvement Populaire', nom_ar: 'الحركة الشعبية', sigle_ar: 'حركة', couleur: '#16A34A', tete: 'Candidat MP Laâyoune', ordre: 5 },
-        { code: 'PPS', nom: 'Parti du Progrès et du Socialisme', nom_ar: 'حزب التقدم والاشتراكية', sigle_ar: 'تقدم', couleur: '#0D9488', tete: 'Candidat PPS Laâyoune', ordre: 6 },
-        { code: 'UC', nom: 'Union Constitutionnelle', nom_ar: 'الاتحاد الدستوري', sigle_ar: 'دستوري', couleur: '#EA580C', tete: 'Candidat UC Laâyoune', ordre: 7 },
-        { code: 'PJD', nom: 'Parti de la Justice et du Développement', nom_ar: 'حزب العدالة والتنمية', sigle_ar: 'عدالة وتنمية', couleur: '#15803D', tete: 'Candidat PJD Laâyoune', ordre: 8 },
-        { code: 'FGD', nom: 'Fédération de la Gauche Démocratique', nom_ar: 'فيدرالية اليسار الديمقراطي', sigle_ar: 'يسار', couleur: '#B91C1C', tete: 'Candidat FGD Laâyoune', ordre: 9 },
-        { code: 'MDS', nom: 'Mouvement Démocratique et Social', nom_ar: 'الحركة الديمقراطية والاجتماعية', sigle_ar: 'حركة ديمقراطية', couleur: '#854D0E', tete: 'Candidat MDS Laâyoune', ordre: 10 }
+        { code: 'RNI', nom: 'Rassemblement National des Indépendants', nom_ar: 'التجمع الوطني للأحرار', sigle_ar: 'أحرار', couleur: '#0066B3', tete: 'Candidat RNI Tan-Tan', ordre: 1 },
+        { code: 'PAM', nom: 'Parti Authenticité et Modernité', nom_ar: 'حزب الأصالة والمعاصرة', sigle_ar: 'أصالة', couleur: '#008080', tete: 'Candidat PAM Tan-Tan', ordre: 2 },
+        { code: 'PI', nom: 'Parti de l\'Istiqlal', nom_ar: 'حزب الاستقلال', sigle_ar: 'استقلال', couleur: '#1E3A8A', tete: 'Candidat PI Tan-Tan', ordre: 3 },
+        { code: 'USFP', nom: 'Union Socialiste des Forces Populaires', nom_ar: 'الاتحاد الاشتراكي للقوات الشعبية', sigle_ar: 'اتحاد اشتراكي', couleur: '#DC2626', tete: 'Candidat USFP Tan-Tan', ordre: 4 },
+        { code: 'MP', nom: 'Mouvement Populaire', nom_ar: 'الحركة الشعبية', sigle_ar: 'حركة', couleur: '#16A34A', tete: 'Candidat MP Tan-Tan', ordre: 5 },
+        { code: 'PPS', nom: 'Parti du Progrès et du Socialisme', nom_ar: 'حزب التقدم والاشتراكية', sigle_ar: 'تقدم', couleur: '#0D9488', tete: 'Candidat PPS Tan-Tan', ordre: 6 },
+        { code: 'UC', nom: 'Union Constitutionnelle', nom_ar: 'الاتحاد الدستوري', sigle_ar: 'دستوري', couleur: '#EA580C', tete: 'Candidat UC Tan-Tan', ordre: 7 },
+        { code: 'PJD', nom: 'Parti de la Justice et du Développement', nom_ar: 'حزب العدالة والتنمية', sigle_ar: 'عدالة وتنمية', couleur: '#15803D', tete: 'Candidat PJD Tan-Tan', ordre: 8 },
+        { code: 'FGD', nom: 'Fédération de la Gauche Démocratique', nom_ar: 'فيدرالية اليسار الديمقراطي', sigle_ar: 'يسار', couleur: '#B91C1C', tete: 'Candidat FGD Tan-Tan', ordre: 9 },
+        { code: 'MDS', nom: 'Mouvement Démocratique et Social', nom_ar: 'الحركة الديمقراطية والاجتماعية', sigle_ar: 'حركة ديمقراطية', couleur: '#854D0E', tete: 'Candidat MDS Tan-Tan', ordre: 10 }
       ];
 
       for (const p of defaultPartis) {
@@ -137,28 +138,26 @@ export async function initDb() {
     console.error('Erreur seed partis:', e);
   }
 
-  // Seed default bureaux for Laâyoune
+  // Seed default bureaux for Tan-Tan
   try {
     const rowB = await getLocal(`SELECT COUNT(*) as count FROM BUREAUX_VOTE`);
     if (!rowB || rowB.count === 0) {
       const defaultBureaux = [
-        { code: 'BV-LAY-001', commune: 'Laâyoune', centre: 'École Al Massira', num: 1, inscrits: 450 },
-        { code: 'BV-LAY-002', commune: 'Laâyoune', centre: 'École Al Massira', num: 2, inscrits: 480 },
-        { code: 'BV-LAY-003', commune: 'Laâyoune', centre: 'Collège Hassan II', num: 3, inscrits: 510 },
-        { code: 'BV-LAY-004', commune: 'Laâyoune', centre: 'Collège Hassan II', num: 4, inscrits: 490 },
-        { code: 'BV-LAY-005', commune: 'Laâyoune', centre: 'Lycée Ibn Zohr', num: 5, inscrits: 520 },
-        { code: 'BV-LAY-006', commune: 'Laâyoune', centre: 'Lycée Ibn Zohr', num: 6, inscrits: 460 },
-        { code: 'BV-LAY-007', commune: 'Laâyoune', centre: 'École Tarik Ibn Ziad', num: 7, inscrits: 470 },
-        { code: 'BV-LAY-008', commune: 'Laâyoune', centre: 'École Tarik Ibn Ziad', num: 8, inscrits: 530 },
-        { code: 'BV-LAY-009', commune: 'Laâyoune', centre: 'Collège Mohammed VI', num: 9, inscrits: 500 },
-        { code: 'BV-LAY-010', commune: 'Laâyoune', centre: 'Collège Mohammed VI', num: 10, inscrits: 485 },
-        { code: 'BV-MAR-001', commune: 'El Marsa', centre: 'École Primaire El Marsa', num: 1, inscrits: 420 },
-        { code: 'BV-MAR-002', commune: 'El Marsa', centre: 'École Primaire El Marsa', num: 2, inscrits: 440 },
-        { code: 'BV-MAR-003', commune: 'El Marsa', centre: 'Collège Al Port', num: 3, inscrits: 410 },
-        { code: 'BV-BOU-001', commune: 'Boucraa', centre: 'Centre Communal Boucraa', num: 1, inscrits: 310 },
-        { code: 'BV-BOU-002', commune: 'Boucraa', centre: 'Centre Communal Boucraa', num: 2, inscrits: 290 },
-        { code: 'BV-DCH-001', commune: 'Dcheira', centre: 'Centre Communal Dcheira', num: 1, inscrits: 350 },
-        { code: 'BV-DCH-002', commune: 'Dcheira', centre: 'Centre Communal Dcheira', num: 2, inscrits: 330 }
+        { code: 'BV-TAN-001', commune: 'Tan-Tan', centre: 'École Al Massira', num: 1, inscrits: 450 },
+        { code: 'BV-TAN-002', commune: 'Tan-Tan', centre: 'École Al Massira', num: 2, inscrits: 480 },
+        { code: 'BV-TAN-003', commune: 'Tan-Tan', centre: 'Collège Hassan II', num: 3, inscrits: 510 },
+        { code: 'BV-TAN-004', commune: 'Tan-Tan', centre: 'Collège Hassan II', num: 4, inscrits: 490 },
+        { code: 'BV-TAN-005', commune: 'Tan-Tan', centre: 'Lycée Ibn Zohr', num: 5, inscrits: 520 },
+        { code: 'BV-TAN-006', commune: 'Tan-Tan', centre: 'Lycée Ibn Zohr', num: 6, inscrits: 460 },
+        { code: 'BV-TAN-007', commune: 'Tan-Tan', centre: 'École Tarik Ibn Ziad', num: 7, inscrits: 470 },
+        { code: 'BV-TAN-008', commune: 'Tan-Tan', centre: 'École Tarik Ibn Ziad', num: 8, inscrits: 530 },
+        { code: 'BV-OUA-001', commune: 'El Ouatia', centre: 'École Primaire El Ouatia', num: 1, inscrits: 420 },
+        { code: 'BV-OUA-002', commune: 'El Ouatia', centre: 'École Primaire El Ouatia', num: 2, inscrits: 440 },
+        { code: 'BV-ABT-001', commune: 'Abteh', centre: 'Centre Communal Abteh', num: 1, inscrits: 350 },
+        { code: 'BV-KHL-001', commune: 'Ben Khlil', centre: 'Centre Communal Ben Khlil', num: 1, inscrits: 310 },
+        { code: 'BV-CHB-001', commune: 'Chbika', centre: 'Centre Communal Chbika', num: 1, inscrits: 290 },
+        { code: 'BV-MSI-001', commune: 'Msied', centre: 'Centre Communal Msied', num: 1, inscrits: 330 },
+        { code: 'BV-TIL-001', commune: 'Tilemzoune', centre: 'Centre Communal Tilemzoune', num: 1, inscrits: 320 }
       ];
 
       for (const b of defaultBureaux) {
@@ -201,6 +200,9 @@ export async function initDb() {
 }
 
 export async function getPartis() {
+  if (isSupabaseConfigured()) {
+    return await getPartisSupabase();
+  }
   await initDb();
   const rows = await queryLocal(`SELECT * FROM PARTIS_POLITIQUES ORDER BY ORDRE_AFFICHAGE ASC, ID ASC`);
   return rows.map(r => ({
@@ -242,6 +244,9 @@ export async function deleteParti(id) {
 }
 
 export async function getBureauxVote({ commune = '' } = {}) {
+  if (isSupabaseConfigured()) {
+    return await getBureauxSupabase(commune);
+  }
   await initDb();
   let sql = `
     SELECT b.*, 
@@ -625,21 +630,61 @@ export async function addUser({ username, password, role = 'responsable', bureau
     `INSERT INTO UTILISATEURS (USERNAME, PASSWORD, ROLE, BUREAU_ID, NOM_RESPONSABLE, TEL, CREATED_AT) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [cleanUser, password.trim(), role, bureau_id ? parseInt(bureau_id) : null, nom_responsable.trim(), tel.trim(), new Date().toISOString()]
   );
+
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase.from('utilisateurs').upsert({
+        username: cleanUser,
+        password: password.trim(),
+        role,
+        bureau_id: bureau_id ? parseInt(bureau_id) : null,
+        nom_responsable: nom_responsable.trim(),
+        tel: tel.trim(),
+        created_at: new Date().toISOString()
+      }, { onConflict: 'username' });
+    } catch (e) {
+      console.warn('Erreur synchro user Supabase:', e.message);
+    }
+  }
+
   return { id: res.lastID, success: true };
 }
 
 export async function updateUser(id, { username, password, role, bureau_id, nom_responsable, tel }) {
   await initDb();
+  const cleanUser = username.trim().toLowerCase();
   await runLocal(
     `UPDATE UTILISATEURS SET USERNAME=?, PASSWORD=?, ROLE=?, BUREAU_ID=?, NOM_RESPONSABLE=?, TEL=? WHERE ID=?`,
-    [username.trim().toLowerCase(), password.trim(), role, bureau_id ? parseInt(bureau_id) : null, (nom_responsable || '').trim(), (tel || '').trim(), id]
+    [cleanUser, password.trim(), role, bureau_id ? parseInt(bureau_id) : null, (nom_responsable || '').trim(), (tel || '').trim(), id]
   );
+
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase.from('utilisateurs').upsert({
+        username: cleanUser,
+        password: password.trim(),
+        role,
+        bureau_id: bureau_id ? parseInt(bureau_id) : null,
+        nom_responsable: (nom_responsable || '').trim(),
+        tel: (tel || '').trim()
+      }, { onConflict: 'username' });
+    } catch (e) {}
+  }
+
   return { success: true };
 }
 
 export async function deleteUser(id) {
   await initDb();
+  const row = await getLocal(`SELECT USERNAME FROM UTILISATEURS WHERE ID=?`, [id]);
   await runLocal(`DELETE FROM UTILISATEURS WHERE ID=?`, [id]);
+
+  if (isSupabaseConfigured() && row) {
+    try {
+      await supabase.from('utilisateurs').delete().eq('username', row.USERNAME);
+    } catch (e) {}
+  }
+
   return { success: true };
 }
 
@@ -663,4 +708,66 @@ export async function generateAccountsForBureaux() {
 
   return { success: true, createdCount };
 }
+
+export async function exportCloudData() {
+  await initDb();
+  const partis = await queryLocal(`SELECT * FROM PARTIS_POLITIQUES`);
+  const bureaux = await queryLocal(`SELECT * FROM BUREAUX_VOTE`);
+  const pv = await queryLocal(`SELECT * FROM PV_BUREAUX`);
+  const votes = await queryLocal(`SELECT * FROM VOTES_PARTIS`);
+  const users = await queryLocal(`SELECT * FROM UTILISATEURS`);
+
+  return {
+    exported_at: new Date().toISOString(),
+    partis,
+    bureaux,
+    pv,
+    votes,
+    users
+  };
+}
+
+export async function importCloudData(data) {
+  await initDb();
+  if (!data) return { success: false, error: 'Données invalides' };
+
+  if (data.partis && Array.isArray(data.partis)) {
+    for (const p of data.partis) {
+      await runLocal(
+        `INSERT OR REPLACE INTO PARTIS_POLITIQUES (ID, CODE, NOM_PARTI, NOM_ARABE, SIGLE_ARABE, COULEUR_HEX, TETE_LISTE, ORDRE_AFFICHAGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [p.ID || p.id, p.CODE || p.code, p.NOM_PARTI || p.nom_parti, p.NOM_ARABE || p.nom_arabe || '', p.SIGLE_ARABE || p.sigle_arabe || '', p.COULEUR_HEX || p.couleur_hex || '#0066B3', p.TETE_LISTE || p.tete_liste || '', p.ORDRE_AFFICHAGE || p.ordre_affichage || 0]
+      );
+    }
+  }
+
+  if (data.bureaux && Array.isArray(data.bureaux)) {
+    for (const b of data.bureaux) {
+      await runLocal(
+        `INSERT OR REPLACE INTO BUREAUX_VOTE (ID, CODE_BUREAU, COMMUNE, CENTRE_VOTE, NUMERO_BUREAU, ADRESSE, NOMBRE_INSCRITS) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [b.ID || b.id, b.CODE_BUREAU || b.code_bureau, b.COMMUNE || b.commune, b.CENTRE_VOTE || b.centre_vote, b.NUMERO_BUREAU || b.numero_bureau, b.ADRESSE || b.adresse || '', b.NOMBRE_INSCRITS || b.nombre_inscrits || 0]
+      );
+    }
+  }
+
+  if (data.pv && Array.isArray(data.pv)) {
+    for (const p of data.pv) {
+      await runLocal(
+        `INSERT OR REPLACE INTO PV_BUREAUX (ID, BUREAU_ID, NOMBRE_VOTANTS, BULLETINS_NULS, BULLETINS_BLANCS, SUFFRAGES_EXPRIMES, EST_VALIDE, NOTE_ANOMALIE, SAISI_PAR, UPDATED_AT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [p.ID || p.id, p.BUREAU_ID || p.bureau_id, p.NOMBRE_VOTANTS || p.nombre_votants, p.BULLETINS_NULS || p.bulletins_nuls, p.BULLETINS_BLANCS || p.bulletins_blancs, p.SUFFRAGES_EXPRIMES || p.suffrages_exprimes, p.EST_VALIDE || p.est_valide ? 1 : 0, p.NOTE_ANOMALIE || p.note_anomalie || '', p.SAISI_PAR || p.saisi_par || '', p.UPDATED_AT || p.updated_at || new Date().toISOString()]
+      );
+    }
+  }
+
+  if (data.votes && Array.isArray(data.votes)) {
+    for (const v of data.votes) {
+      await runLocal(
+        `INSERT OR REPLACE INTO VOTES_PARTIS (ID, PV_ID, PARTI_ID, NOMBRE_VOIX) VALUES (?, ?, ?, ?)`,
+        [v.ID || v.id, v.PV_ID || v.pv_id, v.PARTI_ID || v.parti_id, v.NOMBRE_VOIX || v.nombre_voix]
+      );
+    }
+  }
+
+  return { success: true };
+}
+
 

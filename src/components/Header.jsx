@@ -25,7 +25,7 @@ export default function Header({ activeTab, setActiveTab, session, onLogout }) {
             </div>
             <div>
               <h1 className="text-base sm:text-lg font-black bg-gradient-to-r from-white via-slate-100 to-sky-400 bg-clip-text text-transparent">
-                Dépouillement Laâyoune 2026
+                Dépouillement Tan-Tan 2026
               </h1>
               <div className="text-[10px] sm:text-xs text-sky-400 font-semibold flex items-center gap-1.5">
                 <span>Connecté : <strong className="text-white">{session?.username}</strong></span>

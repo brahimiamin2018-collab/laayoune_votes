@@ -68,7 +68,7 @@ export default function LoginModal({ onLogin }) {
             Connexion au Système Électoral
           </h2>
           <p className="text-xs text-slate-400">
-            Circonscription de Laâyoune (23 Septembre 2026)
+            Circonscription Électorale de Tan-Tan
           </p>
         </div>
 
@@ -92,10 +92,11 @@ export default function LoginModal({ onLogin }) {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="ex: bv_lay_001 ou admin"
+              placeholder=""
               className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition"
               required
               autoFocus
+              autoComplete="off"
             />
           </div>
 
@@ -108,9 +109,10 @@ export default function LoginModal({ onLogin }) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder=""
               className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition"
               required
+              autoComplete="off"
             />
           </div>
 
@@ -128,12 +130,6 @@ export default function LoginModal({ onLogin }) {
           </button>
 
         </form>
-
-        {/* Hints */}
-        <div className="pt-4 border-t border-slate-800/80 text-[11px] text-slate-500 text-center">
-          <p>Responsable de Bureau : Connectez-vous avec vos identifiants attribués.</p>
-          <p className="mt-0.5 text-slate-600">Admin : salama / electorale@1475963</p>
-        </div>
 
       </div>
     </div>

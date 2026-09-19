@@ -222,10 +222,13 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
               className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les Communes</option>
-              <option value="Laâyoune">Laâyoune Ville</option>
-              <option value="El Marsa">El Marsa</option>
-              <option value="Boucraa">Boucraa</option>
-              <option value="Dcheira">Dcheira</option>
+              <option value="Tan-Tan">Tan-Tan Ville</option>
+              <option value="El Ouatia">El Ouatia</option>
+              <option value="Abteh">Abteh</option>
+              <option value="Ben Khlil">Ben Khlil</option>
+              <option value="Chbika">Chbika</option>
+              <option value="Msied">Msied</option>
+              <option value="Tilemzoune">Tilemzoune</option>
             </select>
           </div>
         </div>

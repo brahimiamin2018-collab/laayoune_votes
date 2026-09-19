@@ -118,7 +118,7 @@ export default function PartisManager() {
             Partis Politiques Engagés ({partis.length})
           </h2>
           <p className="text-xs text-slate-400">
-            Gérez la liste des partis politiques, leurs couleurs officielles et têtes de liste pour Laâyoune.
+            Gérez la liste des partis politiques, leurs couleurs officielles et têtes de liste pour Tan-Tan.
           </p>
         </div>
 
@@ -253,7 +253,7 @@ export default function PartisManager() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Tête de Liste (Circonscription Laâyoune)</label>
+                <label className="text-slate-400 font-medium">Tête de Liste (Circonscription Tan-Tan)</label>
                 <input
                   type="text"
                   value={teteListe}

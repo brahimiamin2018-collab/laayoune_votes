@@ -70,7 +70,7 @@ export default function App() {
                 Élections Législatives & Communales (23 Septembre 2026)
               </div>
               <div className="text-base sm:text-lg font-black text-white">
-                Circonscription Électorale de Laâyoune
+                Circonscription Électorale de Tan-Tan
               </div>
             </div>
 
@@ -109,7 +109,7 @@ export default function App() {
       </main>
 
       <footer className="glass-panel border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        <p>Application Autonome d'Assemblage des Votes Laâyoune • Connecté : {session.username}</p>
+        <p>Application Autonome d'Assemblage des Votes Tan-Tan • Connecté : {session.username}</p>
       </footer>
 
     </div>
