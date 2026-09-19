@@ -19,32 +19,10 @@ export default function Header({ activeTab, setActiveTab, session, onLogout }) {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-20">
             
-            {/* Brand Logo & Context */}
+            {/* Brand Logo */}
             <div className="flex items-center space-x-2.5">
-              <div className="p-1 sm:p-1.5 bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl shadow-lg">
-                <img src="/favicon.png" alt="Logo PI" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
-              </div>
-              <div>
-                <h1 className="text-sm sm:text-lg font-black bg-gradient-to-r from-white via-slate-100 to-sky-400 bg-clip-text text-transparent leading-tight">
-                  Dépouillement Tan-Tan 2026
-                </h1>
-                <div className="text-[10px] sm:text-xs text-sky-400 font-semibold flex items-center gap-1.5">
-                  <span className="truncate max-w-[120px] sm:max-w-none">
-                    <strong className="text-white">{session?.username}</strong>
-                  </span>
-                  {bd && (
-                    <span className="text-slate-300 font-normal hidden sm:inline">
-                      ({bd.centre_vote} • BV N°{bd.numero_bureau})
-                    </span>
-                  )}
-                  <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold ${
-                    isAdmin 
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' 
-                      : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                  }`}>
-                    {isAdmin ? 'Admin' : 'BV N°' + (bd?.numero_bureau || '')}
-                  </span>
-                </div>
+              <div className="p-1.5 sm:p-2 bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl shadow-lg">
+                <img src="/favicon.png" alt="Logo PI" className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
               </div>
             </div>
 

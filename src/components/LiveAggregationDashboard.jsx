@@ -103,18 +103,8 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
     <div className="space-y-6">
       
       {/* Controls Bar */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-sky-400" />
-            Tableau Général des Totaux de Votes - Tan-Tan 2026
-          </h2>
-          <p className="text-xs text-slate-400">
-            Cumul en temps réel des voix obtenues par chaque parti politique dans la circonscription de Tan-Tan.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+      <div className="glass-panel p-3.5 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-end gap-3">
+        <div className="flex flex-wrap items-center justify-between w-full sm:w-auto gap-3">
           <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
             <Filter className="w-3.5 h-3.5 text-sky-400" />
             <span className="text-slate-400">Commune :</span>
