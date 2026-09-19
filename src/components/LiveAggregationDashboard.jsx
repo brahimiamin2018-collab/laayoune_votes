@@ -248,36 +248,58 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-semibold text-slate-200">
-              {filteredParties.map((p, idx) => (
-                <tr key={p.id} className="hover:bg-slate-900/40 transition">
-                  <td className="p-3 text-slate-400 font-bold">#{idx + 1}</td>
-                  <td className="p-3">
-                    <div className="flex items-center gap-2.5">
-                      <div 
-                        className="w-3.5 h-3.5 rounded-full flex-shrink-0" 
-                        style={{ backgroundColor: p.couleur_hex }}
-                      ></div>
-                      <div>
-                        <div className="font-extrabold text-white text-xs">
-                          {p.code} <span className="font-normal text-slate-400">({p.sigle_arabe || p.nom_parti})</span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 truncate max-w-[240px]">
-                          {p.nom_parti}
+              {filteredParties.map((p, idx) => {
+                const isPi = p.code === 'PI';
+                return (
+                  <tr key={p.id} className={`transition ${
+                    isPi 
+                      ? 'bg-gradient-to-r from-sky-950/40 via-blue-950/20 to-slate-900/60 border-l-4 border-l-sky-400 shadow-md' 
+                      : 'hover:bg-slate-900/40'
+                  }`}>
+                    <td className="p-3 text-slate-400 font-bold">
+                      #{idx + 1}
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-2.5">
+                        <div 
+                          className="w-3.5 h-3.5 rounded-full flex-shrink-0" 
+                          style={{ backgroundColor: p.couleur_hex }}
+                        ></div>
+                        <div>
+                          <div className="font-extrabold text-white text-xs flex items-center gap-1.5">
+                            <span>{p.code}</span>
+                            <span className="font-normal text-slate-400">({p.sigle_arabe || p.nom_parti})</span>
+                            {isPi && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
+                                ★ Parti de l'Istiqlal
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate max-w-[240px]">
+                            {p.nom_parti}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-3 text-slate-300 font-medium">
-                    {p.tete_liste || 'Non renseigné'}
-                  </td>
-                  <td className="p-3 text-right font-black text-white text-sm">
-                    {p.total_voix.toLocaleString()}
-                  </td>
-                  <td className="p-3 text-right font-bold text-sky-400">
-                    {p.pourcentage}%
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="p-3 font-medium">
+                      <span className={isPi ? "text-sky-200 font-bold" : "text-slate-300"}>
+                        {p.tete_liste || 'Non renseigné'}
+                      </span>
+                      {isPi && (
+                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 bg-sky-400/20 text-sky-300 border border-sky-400/30 rounded-md text-[9px] font-extrabold">
+                          Tête de Liste PI
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3 text-right font-black text-white text-sm">
+                      {p.total_voix.toLocaleString()}
+                    </td>
+                    <td className={`p-3 text-right font-bold ${isPi ? 'text-sky-300 font-black text-sm' : 'text-sky-400'}`}>
+                      {p.pourcentage}%
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
