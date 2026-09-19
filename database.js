@@ -9,6 +9,9 @@ const dbPath = path.join(__dirname, 'depouillement_laayoune.db');
 let db = null;
 
 async function getDb() {
+  if (isSupabaseConfigured() || process.env.VERCEL) {
+    throw new Error("SQLite désactivé en mode Cloud Supabase / Vercel");
+  }
   if (db) return db;
   const sqlite3Module = await import('sqlite3');
   const sqlite3 = sqlite3Module.default || sqlite3Module;
@@ -587,7 +590,6 @@ export async function getVotesAggregation({ commune = '' } = {}) {
 // ----------------------------------------------------
 
 export async function loginUser(username, password) {
-  await initDb();
   const cleanUser = (username || '').trim().toLowerCase();
   const cleanPass = (password || '').trim();
 
@@ -603,6 +605,43 @@ export async function loginUser(username, password) {
     };
   }
 
+  if (isSupabaseConfigured()) {
+    try {
+      const { data: user } = await supabase.from('utilisateurs').select('*').eq('username', cleanUser).maybeSingle();
+      if (!user) return null;
+      if (user.password === cleanPass) {
+        let bureauDetails = null;
+        const bureauId = user.bureau_id;
+        if (bureauId) {
+          const { data: b } = await supabase.from('bureaux_vote').select('*').eq('id', bureauId).maybeSingle();
+          if (b) {
+            bureauDetails = {
+              id: b.id,
+              code_bureau: b.code_bureau,
+              commune: b.commune,
+              centre_vote: b.centre_vote,
+              numero_bureau: b.numero_bureau,
+              nombre_inscrits: b.nombre_inscrits
+            };
+          }
+        }
+        return {
+          id: user.id,
+          username: user.username,
+          role: user.role || 'responsable',
+          bureau_id: bureauId || null,
+          nom_responsable: user.nom_responsable || user.username,
+          tel: user.tel || '',
+          bureau_details: bureauDetails
+        };
+      }
+      return null;
+    } catch (e) {
+      console.error('Erreur loginUser Supabase:', e);
+    }
+  }
+
+  await initDb();
   const row = await getLocal(`SELECT * FROM UTILISATEURS WHERE LOWER(USERNAME) = ?`, [cleanUser]);
   if (!row) return null;
 
@@ -638,6 +677,32 @@ export async function loginUser(username, password) {
 }
 
 export async function getUsers() {
+  if (isSupabaseConfigured()) {
+    const { data: users, error: errU } = await supabase.from('utilisateurs').select('*');
+    if (errU) throw errU;
+    const { data: bureaux } = await supabase.from('bureaux_vote').select('*');
+    const bMap = {};
+    if (bureaux) bureaux.forEach(b => { bMap[b.id] = b; });
+
+    return (users || []).map(r => {
+      const b = bMap[r.bureau_id] || {};
+      return {
+        id: r.id,
+        username: r.username,
+        password: r.password,
+        role: r.role || 'responsable',
+        bureau_id: r.bureau_id || null,
+        nom_responsable: r.nom_responsable || '',
+        tel: r.tel || '',
+        created_at: r.created_at,
+        code_bureau: b.code_bureau || '',
+        commune: b.commune || '',
+        centre_vote: b.centre_vote || '',
+        numero_bureau: b.numero_bureau || null
+      };
+    });
+  }
+
   await initDb();
   const rows = await queryLocal(`
     SELECT u.*, b.CODE_BUREAU, b.COMMUNE, b.CENTRE_VOTE, b.NUMERO_BUREAU
