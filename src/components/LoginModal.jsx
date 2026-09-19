@@ -61,8 +61,8 @@ export default function LoginModal({ onLogin }) {
 
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl shadow-lg shadow-sky-500/20 mb-2">
-            <Vote className="w-8 h-8 text-white" />
+          <div className="inline-flex p-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg mb-2">
+            <img src="/favicon.png" alt="Logo PI" className="w-10 h-10 object-contain" />
           </div>
           <h2 className="text-xl font-black text-white">
             Connexion au Système Électoral

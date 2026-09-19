@@ -10,7 +10,7 @@ import { ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const [session, setSession] = useState(() => {
-    const saved = localStorage.getItem('laayoune_votes_session');
+    const saved = localStorage.getItem('tantan_votes_session');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -23,7 +23,7 @@ export default function App() {
 
   const handleLoginSuccess = (newSession) => {
     setSession(newSession);
-    localStorage.setItem('laayoune_votes_session', JSON.stringify(newSession));
+    localStorage.setItem('tantan_votes_session', JSON.stringify(newSession));
     if (newSession.role === 'responsable') {
       setActiveTab('pv');
     } else {
@@ -33,7 +33,7 @@ export default function App() {
 
   const handleLogout = () => {
     setSession(null);
-    localStorage.removeItem('laayoune_votes_session');
+    localStorage.removeItem('tantan_votes_session');
   };
 
   // IF NOT LOGGED IN: Lock App with Login Screen

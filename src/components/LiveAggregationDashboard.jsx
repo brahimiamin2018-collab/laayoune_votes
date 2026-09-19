@@ -224,7 +224,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-sky-400" />
-            Résultats et Attribution des Sièges (Quotient + Plus Forte Moyenne)
+            Résultats Cumulés des Voix par Parti Politique
           </h3>
           
           <input
@@ -245,7 +245,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                 <th className="p-3">Tête de Liste</th>
                 <th className="p-3 text-right">Total Voix</th>
                 <th className="p-3 text-right">Pourcentage</th>
-                <th className="p-3 text-center">Sièges Estimés (Sur 3)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-semibold text-slate-200">
@@ -276,16 +275,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                   </td>
                   <td className="p-3 text-right font-bold text-sky-400">
                     {p.pourcentage}%
-                  </td>
-                  <td className="p-3 text-center">
-                    {p.sieges > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded-full font-black text-xs shadow-md shadow-amber-500/10">
-                        <Award className="w-3.5 h-3.5" />
-                        {p.sieges} {p.sieges > 1 ? 'sièges' : 'siège'}
-                      </span>
-                    ) : (
-                      <span className="text-slate-500 text-[11px] italic">0 siège</span>
-                    )}
                   </td>
                 </tr>
               ))}

@@ -21,8 +21,8 @@ export default function Header({ activeTab, setActiveTab, session, onLogout }) {
             
             {/* Brand Logo & Context */}
             <div className="flex items-center space-x-2.5">
-              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl sm:rounded-2xl shadow-lg shadow-sky-500/20">
-                <Vote className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="p-1 sm:p-1.5 bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl shadow-lg">
+                <img src="/favicon.png" alt="Logo PI" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
               </div>
               <div>
                 <h1 className="text-sm sm:text-lg font-black bg-gradient-to-r from-white via-slate-100 to-sky-400 bg-clip-text text-transparent leading-tight">
