@@ -59,6 +59,7 @@ let isDbInitialized = false;
 export async function initDb() {
   if (isDbInitialized) return;
   isDbInitialized = true;
+  if (isSupabaseConfigured() || process.env.VERCEL) return;
 
   await runLocal(`
     CREATE TABLE IF NOT EXISTS PARTIS_POLITIQUES (
@@ -314,6 +315,41 @@ export async function deleteBureauVote(id) {
 }
 
 export async function getPvResult(bureau_id) {
+  if (isSupabaseConfigured()) {
+    const bId = parseInt(bureau_id);
+    const { data: b } = await supabase.from('bureaux_vote').select('*').eq('id', bId).maybeSingle();
+    if (!b) return null;
+    const { data: pv } = await supabase.from('pv_bureaux').select('*').eq('bureau_id', bId).maybeSingle();
+    let votesMap = {};
+    if (pv) {
+      const { data: vRows } = await supabase.from('votes_partis').select('parti_id, nombre_voix').eq('pv_id', pv.id);
+      if (vRows) {
+        vRows.forEach(v => { votesMap[v.parti_id] = v.nombre_voix; });
+      }
+    }
+    return {
+      bureau: {
+        id: b.id,
+        code_bureau: b.code_bureau,
+        commune: b.commune,
+        centre_vote: b.centre_vote,
+        numero_bureau: b.numero_bureau,
+        nombre_inscrits: b.nombre_inscrits
+      },
+      pv: pv ? {
+        id: pv.id,
+        nombre_votants: pv.nombre_votants,
+        bulletins_nuls: pv.bulletins_nuls,
+        bulletins_blancs: pv.bulletins_blancs,
+        suffrages_exprimes: pv.suffrages_exprimes,
+        est_valide: pv.est_valide,
+        note_anomalie: pv.note_anomalie || '',
+        saisi_par: pv.saisi_par || '',
+        updated_at: pv.updated_at
+      } : null,
+      votes: votesMap
+    };
+  }
   await initDb();
   const bureau = await getLocal(`SELECT * FROM BUREAUX_VOTE WHERE ID=?`, [bureau_id]);
   if (!bureau) return null;
@@ -353,6 +389,9 @@ export async function getPvResult(bureau_id) {
 }
 
 export async function savePvResult({ bureau_id, votants = 0, nuls = 0, blancs = 0, exprimes = 0, votes_by_parti = {}, saisi_par = 'admin' }) {
+  if (isSupabaseConfigured()) {
+    return await savePvSupabase({ bureau_id, votants, nuls, blancs, exprimes, votes_by_parti, saisi_par });
+  }
   await initDb();
 
   const numVotants = parseInt(votants) || 0;
