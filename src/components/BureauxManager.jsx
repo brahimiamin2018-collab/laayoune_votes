@@ -175,16 +175,16 @@ export default function BureauxManager() {
             <select
               value={selectedCommune}
               onChange={(e) => setSelectedCommune(e.target.value)}
-              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
             >
-              <option value="ALL">Toutes les Communes</option>
-              <option value="Tan-Tan">Tan-Tan Ville</option>
-              <option value="El Ouatia">El Ouatia</option>
-              <option value="Abteh">Abteh</option>
-              <option value="Ben Khlil">Ben Khlil</option>
-              <option value="Chbika">Chbika</option>
-              <option value="Msied">Msied</option>
-              <option value="Tilemzoune">Tilemzoune</option>
+              <option value="ALL" className="bg-slate-900 text-white">Toutes les Communes (جميع الجماعات - 174 bureau)</option>
+              <option value="Tan-Tan" className="bg-slate-900 text-white">Tan-Tan / طانطان (81 bureau)</option>
+              <option value="El Ouatia" className="bg-slate-900 text-white">El Ouatia / الوطية (18 bureau)</option>
+              <option value="Ben Khlil" className="bg-slate-900 text-white">Ben Khlil / بن خليل (15 bureau)</option>
+              <option value="Abteh" className="bg-slate-900 text-white">Abteh / أبطيح (15 bureau)</option>
+              <option value="Chbika" className="bg-slate-900 text-white">Chbika / الشبيكة (15 bureau)</option>
+              <option value="Tilemzoune" className="bg-slate-900 text-white">Tilemzoune / تلمزون (15 bureau)</option>
+              <option value="Msied" className="bg-slate-900 text-white">Msied / لمسيد (15 bureau)</option>
             </select>
           </div>
 

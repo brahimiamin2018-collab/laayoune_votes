@@ -121,16 +121,16 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             <select
               value={selectedCommune}
               onChange={(e) => setSelectedCommune(e.target.value)}
-              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer max-w-[200px] sm:max-w-none text-xs"
             >
-              <option value="ALL">Toute la Circonscription</option>
-              <option value="Tan-Tan">Tan-Tan Ville</option>
-              <option value="El Ouatia">El Ouatia</option>
-              <option value="Abteh">Abteh</option>
-              <option value="Ben Khlil">Ben Khlil</option>
-              <option value="Chbika">Chbika</option>
-              <option value="Msied">Msied</option>
-              <option value="Tilemzoune">Tilemzoune</option>
+              <option value="ALL" className="bg-slate-900 text-white">Toute la Circonscription (جميع الجماعات - 174 bureau)</option>
+              <option value="Tan-Tan" className="bg-slate-900 text-white">Tan-Tan / طانطان (81 bureau)</option>
+              <option value="El Ouatia" className="bg-slate-900 text-white">El Ouatia / الوطية (18 bureau)</option>
+              <option value="Ben Khlil" className="bg-slate-900 text-white">Ben Khlil / بن خليل (15 bureau)</option>
+              <option value="Abteh" className="bg-slate-900 text-white">Abteh / أبطيح (15 bureau)</option>
+              <option value="Chbika" className="bg-slate-900 text-white">Chbika / الشبيكة (15 bureau)</option>
+              <option value="Tilemzoune" className="bg-slate-900 text-white">Tilemzoune / تلمزون (15 bureau)</option>
+              <option value="Msied" className="bg-slate-900 text-white">Msied / لمسيد (15 bureau)</option>
             </select>
           </div>
 
@@ -209,27 +209,27 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
           </div>
           <div className="text-base sm:text-xl font-black text-amber-300 truncate">
-            {topParty ? `${topParty.code} (${topParty.total_voix})` : 'Aucun'}
+            {topParty ? `${topParty.nom_arabe || topParty.code} (${topParty.total_voix})` : 'Aucun'}
           </div>
           <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
-            {topParty?.nom_parti || 'En attente'}
+            {topParty ? `${topParty.code} - ${topParty.nom_parti}` : 'En attente'}
           </div>
         </div>
 
       </div>
 
-      {/* Main Aggregation Table - Optimized for Smartphone */}
+      {/* Main Aggregation Table - Optimized for Smartphone with Arabic Party Names */}
       <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3 sm:space-y-4">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <h3 className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
             <Award className="w-4 h-4 text-sky-400" />
-            Classement des Partis Politiques
+            Classement des Partis Politiques (ترتيب الأحزاب السياسية)
           </h3>
           
           <input
             type="text"
-            placeholder="Rechercher un parti..."
+            placeholder="Rechercher / بحث عن حزب..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 w-full sm:w-64"
@@ -241,7 +241,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             <thead>
               <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px] tracking-wider bg-slate-900/60">
                 <th className="p-2 sm:p-3 w-10 text-center">#</th>
-                <th className="p-2 sm:p-3">Parti</th>
+                <th className="p-2 sm:p-3">Parti Politique (الحزب السياسي)</th>
                 <th className="p-2 sm:p-3 hidden md:table-cell">Tête de Liste</th>
                 <th className="p-2 sm:p-3 text-right">Voix</th>
                 <th className="p-2 sm:p-3 text-right">%</th>
@@ -260,21 +260,22 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                       #{idx + 1}
                     </td>
                     <td className="p-2 sm:p-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <div 
-                          className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full flex-shrink-0" 
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex-shrink-0 shadow-sm" 
                           style={{ backgroundColor: p.couleur_hex }}
                         ></div>
                         <div className="min-w-0">
-                          <div className="font-black text-white text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
-                            <span>{p.code}</span>
+                          <div className="font-extrabold text-white text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
+                            <span className="text-sky-300 font-black" dir="rtl">{p.nom_arabe || p.nom_parti}</span>
+                            <span className="text-slate-400 font-bold text-[11px]">({p.code})</span>
                             {isPi && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
-                                ★ PI
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
+                                ★ Parti de l'Istiqlal
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400 truncate max-w-[140px] sm:max-w-[240px]">
+                          <div className="text-[10px] text-slate-400 truncate max-w-[160px] sm:max-w-[280px]">
                             {p.nom_parti}
                           </div>
                         </div>
