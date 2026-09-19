@@ -363,6 +363,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     <label className="text-slate-300 font-semibold">Nombre Votants</label>
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       min="0"
                       value={votants}
                       onChange={(e) => setVotants(e.target.value)}
@@ -376,6 +378,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     <label className="text-slate-300 font-semibold">Bulletins Nuls</label>
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       min="0"
                       value={nuls}
                       onChange={(e) => setNuls(e.target.value)}
@@ -388,6 +392,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     <label className="text-slate-300 font-semibold">Bulletins Blancs</label>
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       min="0"
                       value={blancs}
                       onChange={(e) => setBlancs(e.target.value)}
@@ -409,6 +415,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     </div>
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       min="0"
                       value={exprimes}
                       onChange={(e) => setExprimes(e.target.value)}
@@ -480,6 +488,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
                         <input
                           type="number"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           min="0"
                           value={partyVote}
                           onChange={(e) => handleVoteChange(p.id, e.target.value)}

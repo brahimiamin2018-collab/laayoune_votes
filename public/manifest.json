@@ -1,0 +1,18 @@
+{
+  "short_name": "Dépouillement",
+  "name": "Dépouillement Tan-Tan 2026",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "description": "Application Mobile de Dépouillement des Votes Tan-Tan 2026"
+}
