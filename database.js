@@ -504,7 +504,14 @@ export async function getVotesAggregation({ commune = '' } = {}) {
       };
     });
 
-    resultsByParty.sort((a, b) => b.total_voix - a.total_voix);
+    resultsByParty.sort((a, b) => {
+      if (b.total_voix !== a.total_voix) {
+        return b.total_voix - a.total_voix;
+      }
+      if (a.code === 'PI') return -1;
+      if (b.code === 'PI') return 1;
+      return (a.ordre_affichage || 0) - (b.ordre_affichage || 0);
+    });
 
     const tauxDepouillement = totalBureaux > 0 ? parseFloat(((depouillesCount / totalBureaux) * 100).toFixed(2)) : 0;
     const tauxParticipation = totalInscrits > 0 ? parseFloat(((totalVotants / totalInscrits) * 100).toFixed(2)) : 0;
@@ -595,7 +602,14 @@ export async function getVotesAggregation({ commune = '' } = {}) {
     };
   });
 
-  resultsByParty.sort((a, b) => b.total_voix - a.total_voix);
+  resultsByParty.sort((a, b) => {
+    if (b.total_voix !== a.total_voix) {
+      return b.total_voix - a.total_voix;
+    }
+    if (a.code === 'PI') return -1;
+    if (b.code === 'PI') return 1;
+    return (a.ordre_affichage || 0) - (b.ordre_affichage || 0);
+  });
 
   resultsByParty.forEach((item, index) => {
     item.rang = index + 1;
