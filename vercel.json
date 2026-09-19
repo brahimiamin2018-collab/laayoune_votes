@@ -1,6 +1,7 @@
 {
   "name": "pi2026",
   "version": 2,
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",
