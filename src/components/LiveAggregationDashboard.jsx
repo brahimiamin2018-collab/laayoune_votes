@@ -215,7 +215,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
               <tr className="border-b-2 border-slate-700 text-white font-black uppercase text-xs sm:text-sm tracking-wider bg-slate-950">
                 <th className="p-3 sm:p-4 w-12 text-center">#</th>
                 <th className="p-3 sm:p-4 text-right">الحزب السياسي</th>
-                <th className="p-3 sm:p-4 hidden md:table-cell text-right">وكيل اللائحة</th>
+                <th className="p-3 sm:p-4 text-right">وكيل اللائحة</th>
                 <th className="p-3 sm:p-4 text-left">الأصوات</th>
                 <th className="p-3 sm:p-4 text-left">النسبة %</th>
               </tr>
@@ -257,10 +257,16 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                           <div className="text-xs text-slate-300 font-semibold truncate max-w-[180px] sm:max-w-[320px]">
                             {p.nom_parti}
                           </div>
+                          {p.tete_liste && (
+                            <div className="text-xs text-amber-300 font-extrabold sm:hidden mt-0.5 flex items-center gap-1">
+                              <span className="text-slate-400 font-normal">وكيل اللائحة:</span>
+                              <span>{p.tete_liste}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 sm:p-4 hidden md:table-cell text-right">
+                    <td className="p-3 sm:p-4 text-right">
                       <span className={isPi ? "text-sky-200 font-black text-sm sm:text-base" : "text-slate-200 font-bold text-xs sm:text-sm"}>
                         {p.tete_liste || 'غير محدد'}
                       </span>
