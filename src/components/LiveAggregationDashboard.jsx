@@ -209,21 +209,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
       {/* Main Aggregation Table - High Contrast DataShow Presentation */}
       <div className="glass-panel p-4 sm:p-6 rounded-2xl border-2 border-slate-700 space-y-4 shadow-2xl bg-slate-900">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="text-sm sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2 drop-shadow-sm">
-            <Award className="w-5 h-5 text-sky-400" />
-            ترتيب الأحزاب السياسية - نتائج حية (DataShow)
-          </h3>
-          
-          <input
-            type="text"
-            placeholder="بحث عن حزب أو وكيل لائحة..."
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            className="px-4 py-2 bg-slate-950 border-2 border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-400 font-bold focus:outline-none focus:border-sky-500 w-full sm:w-72"
-          />
-        </div>
-
         <div className="overflow-x-auto -mx-1 sm:mx-0">
           <table className="w-full text-right text-xs sm:text-sm">
             <thead>
