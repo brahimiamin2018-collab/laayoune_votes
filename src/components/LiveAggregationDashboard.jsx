@@ -101,15 +101,15 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
     <div className="space-y-6" dir="rtl">
       
       {/* Controls Bar */}
-      <div className="glass-panel p-3.5 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+      <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/90 flex flex-wrap items-center justify-between gap-3 shadow-2xl">
         <div className="flex flex-wrap items-center justify-between w-full sm:w-auto gap-3">
-          <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
-            <Filter className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-slate-400">الجماعة :</span>
+          <div className="flex items-center gap-2 bg-slate-950 px-3.5 py-2 rounded-xl border-2 border-slate-700 text-xs sm:text-sm">
+            <Filter className="w-4 h-4 text-sky-400" />
+            <span className="text-slate-200 font-bold">الجماعة :</span>
             <select
               value={selectedCommune}
               onChange={(e) => setSelectedCommune(e.target.value)}
-              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
+              className="bg-transparent text-white font-extrabold focus:outline-none cursor-pointer text-xs sm:text-sm"
             >
               <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (174 مكتب تصويت)</option>
               <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (81 مكتب تصويت)</option>
@@ -124,7 +124,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
 
           <button
             onClick={loadData}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition"
+            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition border border-slate-700"
             title="تحديث البيانات"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-sky-400' : ''}`} />
@@ -132,7 +132,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
 
           <button
             onClick={exportToExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-600/20"
+            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-extrabold transition shadow-lg shadow-emerald-600/30 border border-emerald-400/40"
           >
             <FileSpreadsheet className="w-4 h-4" />
             <span>تصدير إكسيل</span>
@@ -140,7 +140,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
 
           <button
             onClick={exportCloudBackup}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-sky-600/20"
+            className="flex items-center gap-1.5 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs sm:text-sm font-extrabold transition shadow-lg shadow-sky-600/30 border border-sky-400/40"
             title="حفظ نسخة احتياطية من قاعدة البيانات"
           >
             <Vote className="w-4 h-4" />
@@ -149,70 +149,70 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
         </div>
       </div>
 
-      {/* KPI Cards (2x2 grid on mobile) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+      {/* KPI Cards (2x2 grid on mobile) - Optimized for DataShow Projection */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         
-        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-[11px] sm:text-xs text-sky-400 font-semibold mb-1 sm:mb-2">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border-2 border-sky-400/40 bg-slate-900/90 shadow-2xl">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-sky-300 font-extrabold mb-2">
             <span>نسبة الفرز</span>
-            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400" />
+            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400" />
           </div>
-          <div className="text-lg sm:text-2xl font-black text-white">
+          <div className="text-xl sm:text-3xl lg:text-4xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             {data?.depouilles_count || 0} / {data?.total_bureaux || 0}
           </div>
-          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+          <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1">
             المكاتب المفروزة ({data?.taux_depouillement || 0}%)
           </div>
         </div>
 
-        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-[11px] sm:text-xs text-blue-400 font-semibold mb-1 sm:mb-2">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border-2 border-blue-400/40 bg-slate-900/90 shadow-2xl">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-blue-300 font-extrabold mb-2">
             <span>عدد المصوتين</span>
-            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
           </div>
-          <div className="text-lg sm:text-2xl font-black text-white">
+          <div className="text-xl sm:text-3xl lg:text-4xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             {(data?.total_votants || 0).toLocaleString('ar-MA')}
           </div>
-          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
-            المشاركة : <strong className="text-blue-300">{data?.taux_participation || 0}%</strong>
+          <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1 truncate">
+            المشاركة : <strong className="text-sky-300 font-black">{data?.taux_participation || 0}%</strong>
           </div>
         </div>
 
-        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-[11px] sm:text-xs text-emerald-400 font-semibold mb-1 sm:mb-2">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border-2 border-emerald-400/40 bg-slate-900/90 shadow-2xl">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-emerald-300 font-extrabold mb-2">
             <span>الأصوات المعبر عنها</span>
-            <Vote className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+            <Vote className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
           </div>
-          <div className="text-lg sm:text-2xl font-black text-emerald-400">
+          <div className="text-xl sm:text-3xl lg:text-4xl font-black text-emerald-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             {(data?.total_exprimes || 0).toLocaleString('ar-MA')}
           </div>
-          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+          <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1">
             أصوات صحيحة
           </div>
         </div>
 
-        <div className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-950/20 to-slate-900/50">
-          <div className="flex items-center justify-between text-[11px] sm:text-xs text-amber-400 font-semibold mb-1 sm:mb-2">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border-2 border-amber-400/40 bg-slate-900/90 shadow-2xl">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-amber-300 font-extrabold mb-2">
             <span>الحزب المتصدر</span>
-            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
           </div>
-          <div className="text-base sm:text-xl font-black text-amber-300 truncate">
+          <div className="text-lg sm:text-2xl lg:text-3xl font-black text-amber-300 truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             {topParty ? `${topParty.nom_arabe || topParty.code} (${topParty.total_voix})` : 'لا يوجد'}
           </div>
-          <div className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 truncate">
+          <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1 truncate">
             {topParty ? `${topParty.code} - ${topParty.nom_parti}` : 'في انتظار المحاضر'}
           </div>
         </div>
 
       </div>
 
-      {/* Main Aggregation Table - Optimized for Smartphone with Arabic Party Names */}
-      <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-slate-800 space-y-3 sm:space-y-4">
+      {/* Main Aggregation Table - High Contrast DataShow Presentation */}
+      <div className="glass-panel p-4 sm:p-6 rounded-2xl border-2 border-slate-700 space-y-4 shadow-2xl bg-slate-900">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-          <h3 className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
-            <Award className="w-4 h-4 text-sky-400" />
-            ترتيب الأحزاب السياسية
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 className="text-sm sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2 drop-shadow-sm">
+            <Award className="w-5 h-5 text-sky-400" />
+            ترتيب الأحزاب السياسية - نتائج حية (DataShow)
           </h3>
           
           <input
@@ -220,70 +220,70 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             placeholder="بحث عن حزب أو وكيل لائحة..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 w-full sm:w-64"
+            className="px-4 py-2 bg-slate-950 border-2 border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-400 font-bold focus:outline-none focus:border-sky-500 w-full sm:w-72"
           />
         </div>
 
         <div className="overflow-x-auto -mx-1 sm:mx-0">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right text-xs sm:text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px] tracking-wider bg-slate-900/60">
-                <th className="p-2 sm:p-3 w-10 text-center">#</th>
-                <th className="p-2 sm:p-3 text-right">الحزب السياسي</th>
-                <th className="p-2 sm:p-3 hidden md:table-cell text-right">وكيل اللائحة</th>
-                <th className="p-2 sm:p-3 text-left">الأصوات</th>
-                <th className="p-2 sm:p-3 text-left">النسبة %</th>
+              <tr className="border-b-2 border-slate-700 text-white font-black uppercase text-xs sm:text-sm tracking-wider bg-slate-950">
+                <th className="p-3 sm:p-4 w-12 text-center">#</th>
+                <th className="p-3 sm:p-4 text-right">الحزب السياسي</th>
+                <th className="p-3 sm:p-4 hidden md:table-cell text-right">وكيل اللائحة</th>
+                <th className="p-3 sm:p-4 text-left">الأصوات</th>
+                <th className="p-3 sm:p-4 text-left">النسبة %</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-semibold text-slate-200">
+            <tbody className="divide-y-2 divide-slate-800 font-bold text-white">
               {filteredParties.map((p, idx) => {
                 const isPi = p.code === 'PI';
                 return (
                   <tr key={p.id} className={`transition ${
                     isPi 
-                      ? 'bg-gradient-to-r from-sky-950/40 via-blue-950/20 to-slate-900/60 border-r-4 border-r-sky-400 shadow-md' 
-                      : 'hover:bg-slate-900/40'
+                      ? 'bg-gradient-to-r from-sky-950/90 via-blue-900/50 to-slate-900 border-r-8 border-r-sky-400 shadow-2xl ring-2 ring-sky-400/50' 
+                      : 'hover:bg-slate-800/80 bg-slate-900/60'
                   }`}>
-                    <td className="p-2 sm:p-3 text-center text-slate-400 font-extrabold text-xs sm:text-sm">
+                    <td className="p-3 sm:p-4 text-center text-slate-200 font-black text-sm sm:text-base">
                       #{idx + 1}
                     </td>
-                    <td className="p-2 sm:p-3">
-                      <div className="flex items-center gap-2.5">
+                    <td className="p-3 sm:p-4">
+                      <div className="flex items-center gap-3">
                         {isPi ? (
-                          <div className="w-6 h-6 p-0.5 bg-gradient-to-br from-sky-500/30 via-slate-900 to-blue-900/60 border border-sky-400/50 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md shadow-sky-500/20 ring-1 ring-sky-400/30">
-                            <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-sm" />
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 p-1 bg-gradient-to-br from-sky-500/40 via-slate-900 to-blue-900/80 border-2 border-sky-400 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-sky-500/30 ring-2 ring-sky-400/40">
+                            <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-md" />
                           </div>
                         ) : (
                           <div 
-                            className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex-shrink-0 shadow-sm" 
+                            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex-shrink-0 shadow-md border border-white/20" 
                             style={{ backgroundColor: p.couleur_hex }}
                           ></div>
                         )}
                         <div className="min-w-0">
-                          <div className="font-extrabold text-white text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
-                            <span className="text-sky-300 font-black">{p.nom_arabe || p.nom_parti}</span>
-                            <span className="text-slate-400 font-bold text-[11px]">({p.code})</span>
+                          <div className="font-black text-white text-sm sm:text-base md:text-lg flex items-center gap-2 flex-wrap">
+                            <span className="text-sky-300 font-black drop-shadow-sm">{p.nom_arabe || p.nom_parti}</span>
+                            <span className="text-slate-300 font-extrabold text-xs sm:text-sm">({p.code})</span>
                             {isPi && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase shadow-sm">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/30 text-sky-200 border border-sky-400 text-xs font-black tracking-wider uppercase shadow-md">
                                 ★ حزب الاستقلال
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-400 truncate max-w-[160px] sm:max-w-[280px]">
+                          <div className="text-xs text-slate-300 font-semibold truncate max-w-[180px] sm:max-w-[320px]">
                             {p.nom_parti}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="p-2 sm:p-3 hidden md:table-cell font-medium text-right">
-                      <span className={isPi ? "text-sky-200 font-bold" : "text-slate-300"}>
+                    <td className="p-3 sm:p-4 hidden md:table-cell text-right">
+                      <span className={isPi ? "text-sky-200 font-black text-sm sm:text-base" : "text-slate-200 font-bold text-xs sm:text-sm"}>
                         {p.tete_liste || 'غير محدد'}
                       </span>
                     </td>
-                    <td className="p-2 sm:p-3 text-left font-black text-white text-xs sm:text-sm whitespace-nowrap">
+                    <td className="p-3 sm:p-4 text-left font-black text-amber-300 text-base sm:text-xl md:text-2xl whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
                       {p.total_voix.toLocaleString('ar-MA')}
                     </td>
-                    <td className={`p-2 sm:p-3 text-left font-bold whitespace-nowrap ${isPi ? 'text-sky-300 font-black text-xs sm:text-sm' : 'text-sky-400 text-xs'}`}>
+                    <td className={`p-3 sm:p-4 text-left font-black whitespace-nowrap ${isPi ? 'text-sky-300 text-base sm:text-lg drop-shadow-sm' : 'text-sky-400 text-sm sm:text-base'}`}>
                       {p.pourcentage}%
                     </td>
                   </tr>
