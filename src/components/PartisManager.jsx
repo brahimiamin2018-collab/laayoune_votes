@@ -94,9 +94,13 @@ export default function PartisManager() {
       if (res.ok) {
         setShowModal(false);
         loadPartis();
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        alert('حدث خطأ أثناء حفظ بيانات الحزب: ' + (errJson.error || 'خطأ في الخادم'));
       }
     } catch (err) {
       console.error('Erreur:', err);
+      alert('تعذر الاتصال بالخادم أثناء حفظ التغييرات.');
     } finally {
       setSubmitting(false);
     }

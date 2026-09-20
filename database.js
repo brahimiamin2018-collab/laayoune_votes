@@ -1,6 +1,21 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { supabase, isSupabaseConfigured, getPartisSupabase, getBureauxSupabase, savePvSupabase } from './supabase_db.js';
+import { 
+  supabase, 
+  isSupabaseConfigured, 
+  getPartisSupabase, 
+  addPartiSupabase,
+  updatePartiSupabase,
+  deletePartiSupabase,
+  getBureauxSupabase, 
+  addBureauSupabase,
+  updateBureauSupabase,
+  deleteBureauSupabase,
+  savePvSupabase,
+  addUserSupabase,
+  updateUserSupabase,
+  deleteUserSupabase
+} from './supabase_db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -223,6 +238,9 @@ export async function getPartis() {
 }
 
 export async function addParti({ code, nom_parti, nom_arabe = '', sigle_arabe = '', couleur_hex = '#3B82F6', tete_liste = '', logo_icon = 'Vote', ordre_affichage = 0 }) {
+  if (isSupabaseConfigured()) {
+    return await addPartiSupabase({ code, nom_parti, nom_arabe, sigle_arabe, couleur_hex, tete_liste, logo_icon, ordre_affichage });
+  }
   await initDb();
   const res = await runLocal(
     `INSERT INTO PARTIS_POLITIQUES (CODE, NOM_PARTI, NOM_ARABE, SIGLE_ARABE, COULEUR_HEX, TETE_LISTE, LOGO_ICON, ORDRE_AFFICHAGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -232,6 +250,9 @@ export async function addParti({ code, nom_parti, nom_arabe = '', sigle_arabe = 
 }
 
 export async function updateParti(id, { code, nom_parti, nom_arabe, sigle_arabe, couleur_hex, tete_liste, logo_icon, ordre_affichage }) {
+  if (isSupabaseConfigured()) {
+    return await updatePartiSupabase(id, { code, nom_parti, nom_arabe, sigle_arabe, couleur_hex, tete_liste, logo_icon, ordre_affichage });
+  }
   await initDb();
   await runLocal(
     `UPDATE PARTIS_POLITIQUES SET CODE=?, NOM_PARTI=?, NOM_ARABE=?, SIGLE_ARABE=?, COULEUR_HEX=?, TETE_LISTE=?, LOGO_ICON=?, ORDRE_AFFICHAGE=? WHERE ID=?`,
@@ -241,6 +262,9 @@ export async function updateParti(id, { code, nom_parti, nom_arabe, sigle_arabe,
 }
 
 export async function deleteParti(id) {
+  if (isSupabaseConfigured()) {
+    return await deletePartiSupabase(id);
+  }
   await initDb();
   await runLocal(`DELETE FROM VOTES_PARTIS WHERE PARTI_ID=?`, [id]);
   await runLocal(`DELETE FROM PARTIS_POLITIQUES WHERE ID=?`, [id]);
@@ -289,6 +313,9 @@ export async function getBureauxVote({ commune = '' } = {}) {
 }
 
 export async function addBureauVote({ code_bureau, commune, centre_vote, numero_bureau, adresse = '', nombre_inscrits = 0 }) {
+  if (isSupabaseConfigured()) {
+    return await addBureauSupabase({ code_bureau, commune, centre_vote, numero_bureau, adresse, nombre_inscrits });
+  }
   await initDb();
   const res = await runLocal(
     `INSERT INTO BUREAUX_VOTE (CODE_BUREAU, COMMUNE, CENTRE_VOTE, NUMERO_BUREAU, ADRESSE, NOMBRE_INSCRITS) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -298,6 +325,9 @@ export async function addBureauVote({ code_bureau, commune, centre_vote, numero_
 }
 
 export async function updateBureauVote(id, { code_bureau, commune, centre_vote, numero_bureau, adresse, nombre_inscrits }) {
+  if (isSupabaseConfigured()) {
+    return await updateBureauSupabase(id, { code_bureau, commune, centre_vote, numero_bureau, adresse, nombre_inscrits });
+  }
   await initDb();
   await runLocal(
     `UPDATE BUREAUX_VOTE SET CODE_BUREAU=?, COMMUNE=?, CENTRE_VOTE=?, NUMERO_BUREAU=?, ADRESSE=?, NOMBRE_INSCRITS=? WHERE ID=?`,
@@ -307,6 +337,9 @@ export async function updateBureauVote(id, { code_bureau, commune, centre_vote, 
 }
 
 export async function deleteBureauVote(id) {
+  if (isSupabaseConfigured()) {
+    return await deleteBureauSupabase(id);
+  }
   await initDb();
   const pv = await getLocal(`SELECT ID FROM PV_BUREAUX WHERE BUREAU_ID=?`, [id]);
   if (pv) {
@@ -814,53 +847,37 @@ export async function getUsers() {
 }
 
 export async function addUser({ username, password, role = 'responsable', bureau_id = null, nom_responsable = '', tel = '' }) {
+  if (isSupabaseConfigured()) {
+    return await addUserSupabase({ username, password, role, bureau_id, nom_responsable, tel });
+  }
   await initDb();
   const cleanUser = username.trim().toLowerCase();
   const res = await runLocal(
     `INSERT INTO UTILISATEURS (USERNAME, PASSWORD, ROLE, BUREAU_ID, NOM_RESPONSABLE, TEL, CREATED_AT) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [cleanUser, password.trim(), role, bureau_id ? parseInt(bureau_id) : null, nom_responsable.trim(), tel.trim(), new Date().toISOString()]
   );
-
-  if (isSupabaseConfigured()) {
-    try {
-      await supabase.from('utilisateurs').upsert({
-        username: cleanUser,
-        password: password.trim(),
-        role,
-        bureau_id: bureau_id ? parseInt(bureau_id) : null,
-        nom_responsable: nom_responsable.trim(),
-        tel: tel.trim(),
-        created_at: new Date().toISOString()
-      }, { onConflict: 'username' });
-    } catch (e) {
-      console.warn('Erreur synchro user Supabase:', e.message);
-    }
-  }
-
   return { id: res.lastID, success: true };
 }
 
 export async function updateUser(id, { username, password, role, bureau_id, nom_responsable, tel }) {
+  if (isSupabaseConfigured()) {
+    return await updateUserSupabase(id, { username, password, role, bureau_id, nom_responsable, tel });
+  }
   await initDb();
   const cleanUser = username.trim().toLowerCase();
   await runLocal(
     `UPDATE UTILISATEURS SET USERNAME=?, PASSWORD=?, ROLE=?, BUREAU_ID=?, NOM_RESPONSABLE=?, TEL=? WHERE ID=?`,
     [cleanUser, password.trim(), role, bureau_id ? parseInt(bureau_id) : null, (nom_responsable || '').trim(), (tel || '').trim(), id]
   );
+  return { success: true };
+}
 
+export async function deleteUser(id) {
   if (isSupabaseConfigured()) {
-    try {
-      await supabase.from('utilisateurs').upsert({
-        username: cleanUser,
-        password: password.trim(),
-        role,
-        bureau_id: bureau_id ? parseInt(bureau_id) : null,
-        nom_responsable: (nom_responsable || '').trim(),
-        tel: (tel || '').trim()
-      }, { onConflict: 'username' });
-    } catch (e) {}
+    return await deleteUserSupabase(id);
   }
-
+  await initDb();
+  await runLocal(`DELETE FROM UTILISATEURS WHERE ID=?`, [id]);
   return { success: true };
 }
 

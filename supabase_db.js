@@ -163,3 +163,127 @@ export async function savePvSupabase({ bureau_id, votants, nuls, blancs, exprime
 
   return { success: true, pv_id: pvId, est_valide: estValide, note_anomalie: anomalies.join(' | ') };
 }
+
+// ----------------------------------------------------
+// PARTIS POLITIQUE SUPABASE CRUD
+// ----------------------------------------------------
+export async function addPartiSupabase({ code, nom_parti, nom_arabe = '', sigle_arabe = '', couleur_hex = '#0066B3', tete_liste = '', logo_icon = 'Vote', ordre_affichage = 0 }) {
+  const { data, error } = await supabase.from('partis_politiques').insert({
+    code: code.trim().toUpperCase(),
+    nom_parti: nom_parti.trim(),
+    nom_arabe: (nom_arabe || '').trim(),
+    sigle_arabe: (sigle_arabe || '').trim(),
+    couleur_hex: (couleur_hex || '#0066B3').trim(),
+    tete_liste: (tete_liste || '').trim(),
+    logo_icon: (logo_icon || 'Vote').trim(),
+    ordre_affichage: parseInt(ordre_affichage) || 0
+  }).select('id').single();
+
+  if (error) throw error;
+  return { id: data.id, success: true };
+}
+
+export async function updatePartiSupabase(id, { code, nom_parti, nom_arabe, sigle_arabe, couleur_hex, tete_liste, logo_icon, ordre_affichage }) {
+  const { error } = await supabase.from('partis_politiques').update({
+    code: code.trim().toUpperCase(),
+    nom_parti: nom_parti.trim(),
+    nom_arabe: (nom_arabe || '').trim(),
+    sigle_arabe: (sigle_arabe || '').trim(),
+    couleur_hex: (couleur_hex || '#0066B3').trim(),
+    tete_liste: (tete_liste || '').trim(),
+    logo_icon: (logo_icon || 'Vote').trim(),
+    ordre_affichage: parseInt(ordre_affichage) || 0
+  }).eq('id', parseInt(id));
+
+  if (error) throw error;
+  return { success: true };
+}
+
+export async function deletePartiSupabase(id) {
+  await supabase.from('votes_partis').delete().eq('parti_id', parseInt(id));
+  const { error } = await supabase.from('partis_politiques').delete().eq('id', parseInt(id));
+  if (error) throw error;
+  return { success: true };
+}
+
+// ----------------------------------------------------
+// BUREAUX VOTE SUPABASE CRUD
+// ----------------------------------------------------
+export async function addBureauSupabase({ code_bureau, commune, centre_vote, numero_bureau, adresse = '', nombre_inscrits = 0 }) {
+  const { data, error } = await supabase.from('bureaux_vote').insert({
+    code_bureau: code_bureau.trim(),
+    commune: commune.trim(),
+    centre_vote: centre_vote.trim(),
+    numero_bureau: parseInt(numero_bureau) || 1,
+    adresse: (adresse || '').trim(),
+    nombre_inscrits: parseInt(nombre_inscrits) || 0
+  }).select('id').single();
+
+  if (error) throw error;
+  return { id: data.id, success: true };
+}
+
+export async function updateBureauSupabase(id, { code_bureau, commune, centre_vote, numero_bureau, adresse, nombre_inscrits }) {
+  const { error } = await supabase.from('bureaux_vote').update({
+    code_bureau: code_bureau.trim(),
+    commune: commune.trim(),
+    centre_vote: centre_vote.trim(),
+    numero_bureau: parseInt(numero_bureau) || 1,
+    adresse: (adresse || '').trim(),
+    nombre_inscrits: parseInt(nombre_inscrits) || 0
+  }).eq('id', parseInt(id));
+
+  if (error) throw error;
+  return { success: true };
+}
+
+export async function deleteBureauSupabase(id) {
+  const { data: pv } = await supabase.from('pv_bureaux').select('id').eq('bureau_id', parseInt(id)).maybeSingle();
+  if (pv) {
+    await supabase.from('votes_partis').delete().eq('pv_id', pv.id);
+    await supabase.from('pv_bureaux').delete().eq('id', pv.id);
+  }
+  const { error } = await supabase.from('bureaux_vote').delete().eq('id', parseInt(id));
+  if (error) throw error;
+  return { success: true };
+}
+
+// ----------------------------------------------------
+// UTILISATEURS SUPABASE CRUD
+// ----------------------------------------------------
+export async function addUserSupabase({ username, password, role = 'responsable', bureau_id = null, nom_responsable = '', tel = '' }) {
+  const cleanUser = username.trim().toLowerCase();
+  const { data, error } = await supabase.from('utilisateurs').insert({
+    username: cleanUser,
+    password: password.trim(),
+    role,
+    bureau_id: bureau_id ? parseInt(bureau_id) : null,
+    nom_responsable: (nom_responsable || '').trim(),
+    tel: (tel || '').trim(),
+    created_at: new Date().toISOString()
+  }).select('id').single();
+
+  if (error) throw error;
+  return { id: data.id, success: true };
+}
+
+export async function updateUserSupabase(id, { username, password, role, bureau_id, nom_responsable, tel }) {
+  const cleanUser = username.trim().toLowerCase();
+  const { error } = await supabase.from('utilisateurs').update({
+    username: cleanUser,
+    password: password.trim(),
+    role,
+    bureau_id: bureau_id ? parseInt(bureau_id) : null,
+    nom_responsable: (nom_responsable || '').trim(),
+    tel: (tel || '').trim()
+  }).eq('id', parseInt(id));
+
+  if (error) throw error;
+  return { success: true };
+}
+
+export async function deleteUserSupabase(id) {
+  const { error } = await supabase.from('utilisateurs').delete().eq('id', parseInt(id));
+  if (error) throw error;
+  return { success: true };
+}
