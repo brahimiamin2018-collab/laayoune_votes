@@ -42,14 +42,14 @@ export default function UsersManager() {
   };
 
   const handleGenerateAll = async () => {
-    if (!window.confirm('Voulez-vous générer automatiquement des comptes pour tous les bureaux sans identifiant ?')) return;
+    if (!window.confirm('هل تريد توليد حسابات تلقائياً لجميع مكاتب التصويت غير المسندة؟')) return;
 
     setGenerating(true);
     try {
       const res = await fetch('/api/users/generate-all', { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
-        alert(`${data.createdCount} comptes de responsables ont été générés avec succès !`);
+        alert(`تم توليد ${data.createdCount} حساب مسند بنجاح!`);
         loadData();
       }
     } catch (err) {
@@ -82,7 +82,7 @@ export default function UsersManager() {
   };
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Supprimer le compte "${name}" ?`)) return;
+    if (!window.confirm(`حذف الحساب "${name}" ؟`)) return;
 
     try {
       const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
@@ -138,17 +138,17 @@ export default function UsersManager() {
   );
 
   return (
-    <div className="space-y-6 print:p-0">
+    <div className="space-y-6 print:p-0" dir="rtl">
       
       {/* Header */}
       <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 print:hidden">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-sky-400" />
-            Gestion des Comptes Responsables de Bureau ({users.length})
+            حسابات المسؤولين عن المكاتب ({users.length})
           </h2>
           <p className="text-xs text-slate-400">
-            Attribuez et gérez les identifiants de connexion spécifiques de chaque responsable de bureau de vote.
+            تعيين وإدارة بيانات الدخول الخاصة بكل مسؤول مكتب تصويت.
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export default function UsersManager() {
             className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-semibold transition"
           >
             <RefreshCw className={`w-4 h-4 ${generating ? 'animate-spin' : ''}`} />
-            <span>Générer Comptes Manquants</span>
+            <span>توليد الحسابات الناقصة</span>
           </button>
 
           <button
@@ -168,7 +168,7 @@ export default function UsersManager() {
             className="flex items-center gap-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition"
           >
             <Printer className="w-4 h-4 text-sky-400" />
-            <span>Imprimer Fiches d'Accès</span>
+            <span>طباعة بطاقات الدخول</span>
           </button>
 
           <button
@@ -176,7 +176,7 @@ export default function UsersManager() {
             className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-sky-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>Créer un Compte</span>
+            <span>إنشاء حساب جديد</span>
           </button>
 
         </div>
@@ -184,28 +184,28 @@ export default function UsersManager() {
 
       {/* Search */}
       <div className="glass-panel p-3 rounded-2xl border border-slate-800 flex items-center gap-3 bg-slate-900/60 print:hidden">
-        <Search className="w-4 h-4 text-slate-400 ml-2" />
+        <Search className="w-4 h-4 text-slate-400 mr-2" />
         <input
           type="text"
-          placeholder="Rechercher par identifiant, nom du responsable, bureau ou centre..."
+          placeholder="البحث باسم المستخدم، اسم المسؤول، المكتب أو المركز..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+          className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none text-right"
         />
       </div>
 
       {/* Users Table */}
       <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl print:border-none print:shadow-none print:bg-white print:text-black">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-right border-collapse">
             <thead>
               <tr className="bg-slate-950/90 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800 print:bg-gray-100 print:text-black">
-                <th className="py-3 px-4">Utilisateur / Login</th>
-                <th className="py-3 px-4">Mot de Passe</th>
-                <th className="py-3 px-4">Rôle</th>
-                <th className="py-3 px-4">Bureau Attribué</th>
-                <th className="py-3 px-4">Nom Responsable</th>
-                <th className="py-3 px-4 text-right print:hidden">Actions</th>
+                <th className="py-3 px-4">اسم المستخدم</th>
+                <th className="py-3 px-4">كلمة المرور</th>
+                <th className="py-3 px-4">الصفة</th>
+                <th className="py-3 px-4">المكتب المسند</th>
+                <th className="py-3 px-4">اسم المسؤول</th>
+                <th className="py-3 px-4 text-left print:hidden">إجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs print:divide-gray-300">
@@ -227,7 +227,7 @@ export default function UsersManager() {
                           ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                           : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
                       }`}>
-                        {u.role === 'admin' ? 'Admin' : 'Responsable Bureau'}
+                        {u.role === 'admin' ? 'مدير النظام' : 'مسؤول مكتب'}
                       </span>
                     </td>
 
@@ -235,10 +235,10 @@ export default function UsersManager() {
                       {u.bureau_id ? (
                         <div>
                           <div className="text-white font-bold">{u.centre_vote}</div>
-                          <div className="text-[11px] text-slate-400">BV N°{u.numero_bureau} ({u.code_bureau}) • {u.commune}</div>
+                          <div className="text-[11px] text-slate-400">مكتب رقم {u.numero_bureau} ({u.code_bureau}) • {u.commune}</div>
                         </div>
                       ) : (
-                        <span className="text-slate-500 italic">Tous les bureaux (Admin)</span>
+                        <span className="text-slate-500 italic">جميع المكاتب (مدير)</span>
                       )}
                     </td>
 
@@ -246,12 +246,12 @@ export default function UsersManager() {
                       {u.nom_responsable || '-'}
                     </td>
 
-                    <td className="py-3 px-4 text-right print:hidden">
-                      <div className="flex items-center justify-end gap-1">
+                    <td className="py-3 px-4 text-left print:hidden">
+                      <div className="flex items-center justify-start gap-1">
                         <button
                           onClick={() => handleOpenEdit(u)}
                           className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-sky-400 rounded-lg"
-                          title="Modifier"
+                          title="تعديل"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -259,7 +259,7 @@ export default function UsersManager() {
                           <button
                             onClick={() => handleDelete(u.id, u.username)}
                             className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg"
-                            title="Supprimer"
+                            title="حذف"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -272,7 +272,7 @@ export default function UsersManager() {
               ) : (
                 <tr>
                   <td colSpan="6" className="py-8 text-center text-slate-500 italic">
-                    Aucun utilisateur trouvé.
+                    لم يتم العثور على أي حساب.
                   </td>
                 </tr>
               )}
@@ -287,7 +287,7 @@ export default function UsersManager() {
           <div className="glass-panel border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-white">
-                {editingUser ? 'Modifier le Compte' : 'Créer un Compte Responsable'}
+                {editingUser ? 'تعديل الحساب' : 'إنشاء حساب مسؤول جديد'}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -301,55 +301,55 @@ export default function UsersManager() {
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Identifiant (Login)</label>
+                  <label className="text-slate-400 font-medium">اسم المستخدم</label>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.toLowerCase())}
                     placeholder="bv_tan_001"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500 text-right"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Mot de passe</label>
+                  <label className="text-slate-400 font-medium">كلمة المرور</label>
                   <input
                     type="text"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder=""
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono font-bold focus:outline-none focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono font-bold focus:outline-none focus:border-sky-500 text-right"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Rôle</label>
+                <label className="text-slate-400 font-medium">الصفة / الصلاحية</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
                 >
-                  <option value="responsable">Responsable de Bureau de Vote (Restreint)</option>
-                  <option value="admin">Administrateur (Accès Total)</option>
+                  <option value="responsable">مسؤول مكتب تصويت (محدد)</option>
+                  <option value="admin">مدير النظام (وصول كامل)</option>
                 </select>
               </div>
 
               {role === 'responsable' && (
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Bureau de Vote Attribué</label>
+                  <label className="text-slate-400 font-medium">مكتب التصويت المسند</label>
                   <select
                     value={bureauId}
                     onChange={(e) => setBureauId(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
                     required
                   >
-                    <option value="">-- Choisir un Bureau --</option>
+                    <option value="">-- اختر مكتب تصويت --</option>
                     {bureaux.map(b => (
                       <option key={b.id} value={b.id}>
-                        {b.code_bureau} - {b.centre_vote} (BV N°{b.numero_bureau}) • {b.commune}
+                        {b.code_bureau} - {b.centre_vote} (مكتب رقم {b.numero_bureau}) • {b.commune}
                       </option>
                     ))}
                   </select>
@@ -357,13 +357,13 @@ export default function UsersManager() {
               )}
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Nom du Responsable (Optionnel)</label>
+                <label className="text-slate-400 font-medium">اسم المسؤول (اختياري)</label>
                 <input
                   type="text"
                   value={nomResponsable}
                   onChange={(e) => setNomResponsable(e.target.value)}
-                  placeholder="Nom & Prénom"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-sky-500"
+                  placeholder="الاسم الكامل"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-sky-500 text-right"
                 />
               </div>
 
@@ -373,14 +373,14 @@ export default function UsersManager() {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold"
                 >
-                  Annuler
+                  إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-lg shadow-sky-500/20"
                 >
-                  {submitting ? 'Enregistrement...' : 'Enregistrer'}
+                  {submitting ? 'جاري الحفظ...' : 'حفظ البيانات'}
                 </button>
               </div>
 

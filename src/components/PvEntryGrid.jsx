@@ -44,16 +44,13 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       }
 
       if (isRestricted) {
-        // Restricted mode: only set selectedBureauId
         setSelectedBureauId(assignedBureauId.toString());
-        // Fetch bureau list containing just this bureau or fetch PV directly
         const resB = await fetch('/api/depouillement/bureaux');
         if (resB.ok) {
           const allB = await resB.json();
           setBureaux(allB);
         }
       } else {
-        // Admin mode: fetch all bureaux
         const url = selectedCommune && selectedCommune !== 'ALL' 
           ? `/api/depouillement/bureaux?commune=${encodeURIComponent(selectedCommune)}` 
           : '/api/depouillement/bureaux';
@@ -118,7 +115,6 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
     totalVotesPartis += (parseInt(v) || 0);
   });
 
-  // Determine active bureau object
   const selectedBureauObj = bureaux.find(b => b.id.toString() === selectedBureauId?.toString()) || 
     (session?.bureau_details ? {
       id: session.bureau_details.id,
@@ -171,15 +167,15 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       if (res.ok) {
         const json = await res.json();
         if (json.est_valide) {
-          setStatusMsg({ type: 'success', text: 'Procès-Verbal (PV) enregistré et validé avec succès !' });
+          setStatusMsg({ type: 'success', text: 'تم حفظ المحضر والتحقق منه بنجاح!' });
         } else {
-          setStatusMsg({ type: 'warning', text: `PV enregistré avec avertissement : ${json.note_anomalie}` });
+          setStatusMsg({ type: 'warning', text: `تم حفظ المحضر مع ملاحظة: ${json.note_anomalie}` });
         }
         await loadInitialData();
         if (onSaveSuccess) onSaveSuccess();
       } else {
         const errJson = await res.json();
-        setStatusMsg({ type: 'error', text: errJson.error || 'Erreur d\'enregistrement.' });
+        setStatusMsg({ type: 'error', text: errJson.error || 'حدث خطأ أثناء الحفظ.' });
       }
     } catch (err) {
       setStatusMsg({ type: 'error', text: err.message });
@@ -195,7 +191,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       
       {/* Header filter bar (Admin ONLY) */}
       {!isRestricted && (
@@ -203,16 +199,16 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <FileText className="w-5 h-5 text-sky-400" />
-              Saisie des Procès-Verbaux de Dépouillement (PV)
+              إدخال محاضر الفرز (PV)
             </h2>
             <p className="text-xs text-slate-400">
-              Saisissez les résultats bureau par bureau avec vérification d'intégrité en temps réel.
+              إدخال نتائج مكاتب التصويت مع التحقق المباشر من صحة البيانات.
             </p>
           </div>
 
           <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
             <Building2 className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-slate-400">Commune :</span>
+            <span className="text-slate-400">الجماعة :</span>
             <select
               value={selectedCommune}
               onChange={(e) => {
@@ -221,14 +217,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
               }}
               className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
             >
-              <option value="ALL" className="bg-slate-900 text-white">Toutes les Communes (جميع الجماعات - 174 bureau)</option>
-              <option value="Tan-Tan" className="bg-slate-900 text-white">Tan-Tan / طانطان (81 bureau)</option>
-              <option value="El Ouatia" className="bg-slate-900 text-white">El Ouatia / الوطية (18 bureau)</option>
-              <option value="Ben Khlil" className="bg-slate-900 text-white">Ben Khlil / بن خليل (15 bureau)</option>
-              <option value="Abteh" className="bg-slate-900 text-white">Abteh / أبطيح (15 bureau)</option>
-              <option value="Chbika" className="bg-slate-900 text-white">Chbika / الشبيكة (15 bureau)</option>
-              <option value="Tilemzoune" className="bg-slate-900 text-white">Tilemzoune / تلمزون (15 bureau)</option>
-              <option value="Msied" className="bg-slate-900 text-white">Msied / لمسيد (15 bureau)</option>
+              <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (174 مكتب تصويت)</option>
+              <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (81 مكتب تصويت)</option>
+              <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
+              <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
+              <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
+              <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
+              <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
+              <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
             </select>
           </div>
         </div>
@@ -242,25 +238,25 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
             <div className="mb-3 space-y-2">
               <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <Search className="w-3.5 h-3.5 text-sky-400" />
-                Sélectionner le Bureau de Vote ({filteredBureauxList.length})
+                اختر مكتب التصويت ({filteredBureauxList.length})
               </label>
               <input
                 type="text"
-                placeholder="Chercher par N° bureau, centre..."
+                placeholder="البحث برقم المكتب، المركز..."
                 value={searchBureau}
                 onChange={(e) => setSearchBureau(e.target.value)}
                 className="w-full px-3 py-1.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
               />
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs">
+            <div className="flex-1 overflow-y-auto space-y-1.5 pl-1 text-xs">
               {filteredBureauxList.map((b) => {
                 const isSelected = selectedBureauId.toString() === b.id.toString();
                 return (
                   <button
                     key={b.id}
                     onClick={() => setSelectedBureauId(b.id.toString())}
-                    className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between ${
+                    className={`w-full text-right p-3 rounded-xl border transition-all flex items-center justify-between ${
                       isSelected
                         ? 'bg-sky-500/15 border-sky-500/50 text-white shadow-md shadow-sky-500/10'
                         : b.has_pv
@@ -273,14 +269,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     <div>
                       <div className="font-bold flex items-center gap-2">
                         <span className="text-sky-300">{b.code_bureau}</span>
-                        <span className="text-slate-200">BV N°{b.numero_bureau}</span>
+                        <span className="text-slate-200">مكتب رقم {b.numero_bureau}</span>
                       </div>
                       <div className="text-[11px] text-slate-400 truncate max-w-[200px]">
                         {b.centre_vote} ({b.commune})
                       </div>
                     </div>
 
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-left flex-shrink-0">
                       {b.has_pv ? (
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           b.pv?.est_valide
@@ -288,10 +284,10 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                             : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                         }`}>
                           {b.pv?.est_valide ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                          {b.pv?.suffrages_exprimes} voix
+                          {b.pv?.suffrages_exprimes} صوت
                         </span>
                       ) : (
-                        <span className="text-[10px] text-slate-500 italic">Non dépouillé</span>
+                        <span className="text-[10px] text-slate-500 italic">غير مفروز</span>
                       )}
                     </div>
                   </button>
@@ -311,14 +307,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
               <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
                 <div>
                   <div className="text-[11px] text-sky-400 font-extrabold uppercase tracking-wider">
-                    Procès-Verbal Officiel de Dépouillement
+                    محضر الفرز الرسمي
                   </div>
                   <h3 className="text-lg font-black text-white flex items-center gap-2 mt-0.5">
                     <span>{selectedBureauObj.centre_vote}</span>
-                    <span className="text-sky-300 font-bold">• Bureau N°{selectedBureauObj.numero_bureau} ({selectedBureauObj.code_bureau})</span>
+                    <span className="text-sky-300 font-bold">• مكتب رقم {selectedBureauObj.numero_bureau} ({selectedBureauObj.code_bureau})</span>
                   </h3>
                   <div className="text-xs text-slate-400 mt-1">
-                    Commune de <strong className="text-white">{selectedBureauObj.commune}</strong> • Nombre d'électeurs inscrits : <strong className="text-sky-300 font-bold">{numInscrits}</strong>
+                    جماعة <strong className="text-white">{selectedBureauObj.commune}</strong> • عدد الناخبين المسجلين: <strong className="text-sky-300 font-bold">{numInscrits}</strong>
                   </div>
                 </div>
 
@@ -326,12 +322,12 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   {isFullyValid ? (
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold shadow-md shadow-emerald-500/10">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span>PV Conforme</span>
+                      <span>محضر مطابق</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded-xl text-xs font-bold shadow-md shadow-amber-500/10">
                       <AlertTriangle className="w-4 h-4 text-amber-400" />
-                      <span>Saisie à compléter</span>
+                      <span>في طور الإدخال</span>
                     </div>
                   )}
                 </div>
@@ -355,12 +351,12 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
               <div className="space-y-3">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2">
                   <Calculator className="w-4 h-4 text-sky-400" />
-                  <span>1. Chiffres Globaux du Bureau</span>
+                  <span>1. الأرقام الإجمالية للمكتب</span>
                 </h4>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-slate-300 font-semibold">Nombre Votants</label>
+                    <label className="text-slate-300 font-semibold">عدد المصوتين</label>
                     <input
                       type="number"
                       inputMode="numeric"
@@ -375,7 +371,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-slate-300 font-semibold">Bulletins Nuls</label>
+                    <label className="text-slate-300 font-semibold">الأوراق الملغاة</label>
                     <input
                       type="number"
                       inputMode="numeric"
@@ -389,7 +385,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-slate-300 font-semibold">Bulletins Blancs</label>
+                    <label className="text-slate-300 font-semibold">الأوراق البيضاء</label>
                     <input
                       type="number"
                       inputMode="numeric"
@@ -404,13 +400,13 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="text-slate-300 font-semibold">Suffrages Exprimés</label>
+                      <label className="text-slate-300 font-semibold">الأصوات المعبر عنها</label>
                       <button
                         type="button"
                         onClick={handleAutoCalcExprimes}
                         className="text-[10px] text-sky-400 underline font-extrabold hover:text-sky-300"
                       >
-                        Auto
+                        تلقائي
                       </button>
                     </div>
                     <input
@@ -432,15 +428,15 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                 {numVotants > 0 && (
                   <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-[11px] flex flex-wrap items-center justify-between gap-2">
                     <span className="text-slate-400">
-                      Vérification : <strong>{numVotants} votants - ({numNuls} nuls + {numBlancs} blancs) = {calculatedExprimes} exprimés</strong>
+                      التحقق : <strong>{numVotants} مصوت - ({numNuls} ملغاة + {numBlancs} بيضاء) = {calculatedExprimes} معبر عنها</strong>
                     </span>
                     {isExprimesMatch ? (
                       <span className="text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Total Exprimés Conforme
+                        <CheckCircle2 className="w-3.5 h-3.5" /> مجموع الأصوات المعبر عنها صحيح
                       </span>
                     ) : (
                       <span className="text-amber-400 font-bold flex items-center gap-1">
-                        <AlertTriangle className="w-3.5 h-3.5" /> Écart calculé ({calculatedExprimes}) vs saisi ({numExprimes})
+                        <AlertTriangle className="w-3.5 h-3.5" /> تفاوت بين المحسوب ({calculatedExprimes}) والمُدخل ({numExprimes})
                       </span>
                     )}
                   </div>
@@ -452,13 +448,13 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                     <Vote className="w-4 h-4 text-sky-400" />
-                    <span>2. Saisie des Voix par Parti Politique</span>
+                    <span>2. إدخال أصوات الأحزاب السياسية</span>
                   </h4>
                   
                   <div className="text-xs font-semibold">
-                    <span className="text-slate-400">Total Voix Partis : </span>
+                    <span className="text-slate-400">مجموع أصوات الأحزاب : </span>
                     <span className={`font-extrabold ${isPartisVotesMatch ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {totalVotesPartis} / {numExprimes} exprimés
+                      {totalVotesPartis} / {numExprimes} معبر عنها
                     </span>
                   </div>
                 </div>
@@ -495,7 +491,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                           value={partyVote}
                           onChange={(e) => handleVoteChange(p.id, e.target.value)}
                           placeholder="0"
-                          className="w-24 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-right font-extrabold text-white text-sm focus:outline-none focus:border-sky-500"
+                          className="w-24 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-left font-extrabold text-white text-sm focus:outline-none focus:border-sky-500"
                         />
                       </div>
                     );
@@ -510,7 +506,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   onClick={resetForm}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
                 >
-                  Réinitialiser
+                  إعادة ضبط
                 </button>
 
                 <button
@@ -523,7 +519,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   }`}
                 >
                   {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>{saving ? 'Enregistrement en cours...' : 'Enregistrer le PV'}</span>
+                  <span>{saving ? 'جاري الحفظ...' : 'حفظ المحضر'}</span>
                 </button>
               </div>
 
@@ -531,7 +527,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
           ) : (
             <div className="glass-panel p-12 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center space-y-3">
               <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
-              <h3 className="text-base font-bold text-white">Chargement des données du bureau...</h3>
+              <h3 className="text-base font-bold text-white">جاري تحميل بيانات المكتب...</h3>
             </div>
           )}
 

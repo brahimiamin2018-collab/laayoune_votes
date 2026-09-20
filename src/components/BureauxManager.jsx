@@ -61,7 +61,7 @@ export default function BureauxManager() {
   };
 
   const handleDelete = async (id, code) => {
-    if (!window.confirm(`Supprimer le bureau "${code}" ?`)) return;
+    if (!window.confirm(`حذف مكتب التصويت "${code}" ؟`)) return;
     try {
       const res = await fetch(`/api/depouillement/bureaux/${id}`, { method: 'DELETE' });
       if (res.ok) loadBureaux();
@@ -138,10 +138,10 @@ export default function BureauxManager() {
           addedCount++;
         }
 
-        alert(`${addedCount} bureaux de vote importés avec succès !`);
+        alert(`تم استيراد ${addedCount} مكتب تصويت بنجاح!`);
         loadBureaux();
       } catch (err) {
-        alert('Erreur importation Excel: ' + err.message);
+        alert('خطأ في استيراد ملف إكسيل: ' + err.message);
       }
     };
     reader.readAsBinaryString(file);
@@ -155,42 +155,42 @@ export default function BureauxManager() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       
       <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Building2 className="w-5 h-5 text-sky-400" />
-            Bureaux de Vote - Circonscription de Tan-Tan ({bureaux.length})
+            مكاتب التصويت - إقليم طانطان ({bureaux.length})
           </h2>
           <p className="text-xs text-slate-400">
-            Gestion de l'emplacement et des effectifs de tous les bureaux de vote.
+            إدارة المكاتب والمراكز وعدد المسجلين في كل مكتب تصويت.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
             <Filter className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-slate-400">Commune :</span>
+            <span className="text-slate-400">الجماعة :</span>
             <select
               value={selectedCommune}
               onChange={(e) => setSelectedCommune(e.target.value)}
               className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
             >
-              <option value="ALL" className="bg-slate-900 text-white">Toutes les Communes (جميع الجماعات - 174 bureau)</option>
-              <option value="Tan-Tan" className="bg-slate-900 text-white">Tan-Tan / طانطان (81 bureau)</option>
-              <option value="El Ouatia" className="bg-slate-900 text-white">El Ouatia / الوطية (18 bureau)</option>
-              <option value="Ben Khlil" className="bg-slate-900 text-white">Ben Khlil / بن خليل (15 bureau)</option>
-              <option value="Abteh" className="bg-slate-900 text-white">Abteh / أبطيح (15 bureau)</option>
-              <option value="Chbika" className="bg-slate-900 text-white">Chbika / الشبيكة (15 bureau)</option>
-              <option value="Tilemzoune" className="bg-slate-900 text-white">Tilemzoune / تلمزون (15 bureau)</option>
-              <option value="Msied" className="bg-slate-900 text-white">Msied / لمسيد (15 bureau)</option>
+              <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (174 مكتب تصويت)</option>
+              <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (81 مكتب تصويت)</option>
+              <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
+              <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
+              <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
+              <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
+              <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
+              <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
             </select>
           </div>
 
           <label className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold cursor-pointer transition">
             <Upload className="w-4 h-4 text-emerald-400" />
-            <span>Importer Excel</span>
+            <span>استيراد إكسيل</span>
             <input
               type="file"
               accept=".xlsx, .xls, .csv"
@@ -204,34 +204,34 @@ export default function BureauxManager() {
             className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-sky-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>Ajouter un Bureau</span>
+            <span>إضافة مكتب تصويت</span>
           </button>
         </div>
       </div>
 
       <div className="glass-panel p-3 rounded-2xl border border-slate-800 flex items-center gap-3 bg-slate-900/60">
-        <Search className="w-4 h-4 text-slate-400 ml-2" />
+        <Search className="w-4 h-4 text-slate-400 mr-2" />
         <input
           type="text"
-          placeholder="Rechercher par N° bureau, nom du centre..."
+          placeholder="البحث برقم المكتب، اسم المركز..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+          className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none text-right"
         />
       </div>
 
       <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-right border-collapse">
             <thead>
               <tr className="bg-slate-950/90 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                <th className="py-3 px-4">Code</th>
-                <th className="py-3 px-4">N° BV</th>
-                <th className="py-3 px-4">Commune</th>
-                <th className="py-3 px-4">Centre de Vote</th>
-                <th className="py-3 px-4 text-right">Inscrits</th>
-                <th className="py-3 px-4 text-center">Statut Dépouillement</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">رمز المكتب</th>
+                <th className="py-3 px-4">رقم المكتب</th>
+                <th className="py-3 px-4">الجماعة</th>
+                <th className="py-3 px-4">مركز التصويت</th>
+                <th className="py-3 px-4 text-left">عدد المسجلين</th>
+                <th className="py-3 px-4 text-center">حالة الفرز</th>
+                <th className="py-3 px-4 text-left">إجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
@@ -239,10 +239,10 @@ export default function BureauxManager() {
                 filteredBureaux.map((b) => (
                   <tr key={b.id} className="hover:bg-slate-800/40 transition">
                     <td className="py-3 px-4 font-bold text-sky-400">{b.code_bureau}</td>
-                    <td className="py-3 px-4 font-extrabold text-white">Bureau N°{b.numero_bureau}</td>
+                    <td className="py-3 px-4 font-extrabold text-white">مكتب رقم {b.numero_bureau}</td>
                     <td className="py-3 px-4 text-slate-300">{b.commune}</td>
                     <td className="py-3 px-4 text-slate-200 font-medium">{b.centre_vote}</td>
-                    <td className="py-3 px-4 text-right font-bold text-white">{b.nombre_inscrits?.toLocaleString('fr-FR')}</td>
+                    <td className="py-3 px-4 text-left font-bold text-white">{b.nombre_inscrits?.toLocaleString('ar-MA')}</td>
                     <td className="py-3 px-4 text-center">
                       {b.has_pv ? (
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -251,25 +251,25 @@ export default function BureauxManager() {
                             : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                         }`}>
                           <CheckCircle2 className="w-3 h-3" />
-                          <span>Dépouillé ({b.pv?.suffrages_exprimes} expr.)</span>
+                          <span>تم فرزه ({b.pv?.suffrages_exprimes} صوت)</span>
                         </span>
                       ) : (
-                        <span className="text-slate-500 text-[11px] italic">Non saisi</span>
+                        <span className="text-slate-500 text-[11px] italic">لم يفرز بعد</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
+                    <td className="py-3 px-4 text-left">
+                      <div className="flex items-center justify-start gap-1">
                         <button
                           onClick={() => handleOpenEdit(b)}
                           className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-sky-400 rounded-lg"
-                          title="Modifier"
+                          title="تعديل"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(b.id, b.code_bureau)}
                           className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg"
-                          title="Supprimer"
+                          title="حذف"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -280,7 +280,7 @@ export default function BureauxManager() {
               ) : (
                 <tr>
                   <td colSpan="7" className="py-8 text-center text-slate-500 italic">
-                    Aucun bureau de vote trouvé.
+                    لم يتم العثور على أي مكتب تصويت.
                   </td>
                 </tr>
               )}
@@ -294,7 +294,7 @@ export default function BureauxManager() {
           <div className="glass-panel border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-white">
-                {editingBureau ? 'Modifier le Bureau de Vote' : 'Ajouter un Bureau de Vote'}
+                {editingBureau ? 'تعديل مكتب التصويت' : 'إضافة مكتب تصويت جديد'}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -308,69 +308,69 @@ export default function BureauxManager() {
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Code Bureau (ex: BV-TAN-001)</label>
+                  <label className="text-slate-400 font-medium">رمز المكتب</label>
                   <input
                     type="text"
                     value={codeBureau}
                     onChange={(e) => setCodeBureau(e.target.value)}
                     placeholder="BV-TAN-001"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold uppercase focus:outline-none focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold uppercase focus:outline-none focus:border-sky-500 text-right"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Numéro Bureau</label>
+                  <label className="text-slate-400 font-medium">رقم المكتب</label>
                   <input
                     type="number"
                     min="1"
                     value={numeroBureau}
                     onChange={(e) => setNumeroBureau(e.target.value)}
                     placeholder="1"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500 text-right"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Commune</label>
+                <label className="text-slate-400 font-medium">الجماعة</label>
                 <select
                   value={commune}
                   onChange={(e) => setCommune(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
                 >
-                  <option value="Tan-Tan">Tan-Tan</option>
-                  <option value="El Ouatia">El Ouatia</option>
-                  <option value="Abteh">Abteh</option>
-                  <option value="Ben Khlil">Ben Khlil</option>
-                  <option value="Chbika">Chbika</option>
-                  <option value="Msied">Msied</option>
-                  <option value="Tilemzoune">Tilemzoune</option>
+                  <option value="Tan-Tan">طانطان</option>
+                  <option value="El Ouatia">الوطية</option>
+                  <option value="Abteh">أبطيح</option>
+                  <option value="Ben Khlil">بن خليل</option>
+                  <option value="Chbika">الشبيكة</option>
+                  <option value="Msied">لمسيد</option>
+                  <option value="Tilemzoune">تلمزون</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Centre de Vote</label>
+                <label className="text-slate-400 font-medium">مركز التصويت</label>
                 <input
                   type="text"
                   value={centreVote}
                   onChange={(e) => setCentreVote(e.target.value)}
-                  placeholder="ex: École Al Massira"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
+                  placeholder="مثال: مدرسة المسيرة"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 text-right"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Nombre d'Inscrits</label>
+                <label className="text-slate-400 font-medium">عدد الناخبين المسجلين</label>
                 <input
                   type="number"
                   min="0"
                   value={nombreInscrits}
                   onChange={(e) => setNombreInscrits(e.target.value)}
                   placeholder="450"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500 text-right"
                   required
                 />
               </div>
@@ -381,14 +381,14 @@ export default function BureauxManager() {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold"
                 >
-                  Annuler
+                  إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-lg shadow-sky-500/20"
                 >
-                  {submitting ? 'Enregistrement...' : 'Enregistrer'}
+                  {submitting ? 'جاري الحفظ...' : 'حفظ البيانات'}
                 </button>
               </div>
 

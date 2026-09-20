@@ -57,7 +57,7 @@ export default function PartisManager() {
   };
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Supprimer le parti "${name}" ?`)) return;
+    if (!window.confirm(`حذف الحزب السياسي "${name}" ؟`)) return;
     try {
       const res = await fetch(`/api/depouillement/partis/${id}`, { method: 'DELETE' });
       if (res.ok) loadPartis();
@@ -109,16 +109,16 @@ export default function PartisManager() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       
       <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Award className="w-5 h-5 text-sky-400" />
-            Partis Politiques Engagés ({partis.length})
+            الأحزاب السياسية المشاركة ({partis.length})
           </h2>
           <p className="text-xs text-slate-400">
-            Gérez la liste des partis politiques, leurs couleurs officielles et têtes de liste pour Tan-Tan.
+            إدارة قائمة الأحزاب السياسية وألوانها الرسمية ووكلاء اللوائح.
           </p>
         </div>
 
@@ -127,7 +127,7 @@ export default function PartisManager() {
           className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-sky-500/20"
         >
           <Plus className="w-4 h-4" />
-          <span>Ajouter un Parti</span>
+          <span>إضافة حزب سياسي</span>
         </button>
       </div>
 
@@ -145,8 +145,8 @@ export default function PartisManager() {
                 ></div>
                 <div>
                   <div className="text-base font-extrabold text-white flex items-center gap-2">
-                    <span>{p.code}</span>
-                    {p.sigle_arabe && <span className="text-sky-300 text-xs font-normal">({p.sigle_arabe})</span>}
+                    <span>{p.nom_arabe || p.nom_parti}</span>
+                    <span className="text-sky-300 text-xs font-normal">({p.code})</span>
                   </div>
                   <div className="text-xs text-slate-400 font-medium">
                     {p.nom_parti}
@@ -158,14 +158,14 @@ export default function PartisManager() {
                 <button
                   onClick={() => handleOpenEdit(p)}
                   className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-sky-400 rounded-lg"
-                  title="Modifier"
+                  title="تعديل"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => handleDelete(p.id, p.code)}
                   className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg"
-                  title="Supprimer"
+                  title="حذف"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -173,14 +173,9 @@ export default function PartisManager() {
             </div>
 
             <div className="pt-2 border-t border-slate-800/80 text-xs space-y-1">
-              {p.nom_arabe && (
-                <div className="text-slate-300 font-semibold text-right">
-                  {p.nom_arabe}
-                </div>
-              )}
               <div className="text-slate-400 flex items-center justify-between">
-                <span>Tête de Liste :</span>
-                <span className="font-bold text-slate-200">{p.tete_liste || 'Non spécifié'}</span>
+                <span>وكيل اللائحة :</span>
+                <span className="font-bold text-slate-200">{p.tete_liste || 'غير محدد'}</span>
               </div>
             </div>
           </div>
@@ -192,7 +187,7 @@ export default function PartisManager() {
           <div className="glass-panel border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-white">
-                {editingParti ? 'Modifier le Parti Politique' : 'Ajouter un Parti Politique'}
+                {editingParti ? 'تعديل الحزب السياسي' : 'إضافة حزب سياسي جديد'}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -206,67 +201,67 @@ export default function PartisManager() {
               
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Code (ex: RNI, PAM)</label>
+                  <label className="text-slate-400 font-medium">رمز الحزب (ex: PI, RNI)</label>
                   <input
                     type="text"
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
-                    placeholder="RNI"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold uppercase focus:outline-none focus:border-sky-500"
+                    placeholder="PI"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold uppercase focus:outline-none focus:border-sky-500 text-right"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-medium">Sigle Arabe (ex: أحرار)</label>
+                  <label className="text-slate-400 font-medium">اختصار بالعربية (مثال: أحرار)</label>
                   <input
                     type="text"
                     value={sigleArabe}
                     onChange={(e) => setSigleArabe(e.target.value)}
-                    placeholder="أحرار"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500"
+                    placeholder="استقلال"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500 text-right"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Nom du Parti (Français)</label>
+                <label className="text-slate-400 font-medium">اسم الحزب بالعربية</label>
+                <input
+                  type="text"
+                  value={nomArabe}
+                  onChange={(e) => setNomArabe(e.target.value)}
+                  placeholder="حزب الاستقلال"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold text-right focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-slate-400 font-medium">اسم الحزب بالفرنسية</label>
                 <input
                   type="text"
                   value={nomParti}
                   onChange={(e) => setNomParti(e.target.value)}
-                  placeholder="Rassemblement National des Indépendants"
+                  placeholder="Parti de l'Istiqlal"
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Nom en Arabe</label>
-                <input
-                  type="text"
-                  value={nomArabe}
-                  onChange={(e) => setNomArabe(e.target.value)}
-                  placeholder="التجمع الوطني للأحرار"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold text-right focus:outline-none focus:border-sky-500"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">Tête de Liste (Circonscription Tan-Tan)</label>
+                <label className="text-slate-400 font-medium">وكيل اللائحة</label>
                 <input
                   type="text"
                   value={teteListe}
                   onChange={(e) => setTeteListe(e.target.value)}
-                  placeholder="Nom & Prénom du candidat"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-sky-500"
+                  placeholder="اسم مرشح وكيل اللائحة"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-right focus:outline-none focus:border-sky-500"
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="text-slate-400 font-medium flex items-center gap-1.5">
                   <Palette className="w-3.5 h-3.5 text-sky-400" />
-                  Couleur Officielle :
+                  اللون الرسمي :
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -301,14 +296,14 @@ export default function PartisManager() {
                   onClick={() => setShowModal(false)}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold"
                 >
-                  Annuler
+                  إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-lg shadow-sky-500/20"
                 >
-                  {submitting ? 'Enregistrement...' : 'Enregistrer'}
+                  {submitting ? 'جاري الحفظ...' : 'حفظ البيانات'}
                 </button>
               </div>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, User, KeyRound, Vote, AlertCircle, RefreshCw } from 'lucide-react';
+import { Lock, User, KeyRound, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function LoginModal({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -10,7 +10,7 @@ export default function LoginModal({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
-      setErrorMsg('Veuillez saisir votre identifiant et mot de passe.');
+      setErrorMsg('المرجو إدخال اسم المستخدم وكلمة المرور.');
       return;
     }
 
@@ -39,20 +39,20 @@ export default function LoginModal({ onLogin }) {
         onLogin(data.session);
       } else {
         setLoading(false);
-        setErrorMsg(data?.error || 'Identifiant ou mot de passe incorrect.');
+        setErrorMsg(data?.error || 'اسم المستخدم أو كلمة المرور غير صحيحة.');
       }
     } catch (err) {
       setLoading(false);
       if (err.name === 'AbortError') {
-        setErrorMsg('Délai d\'attente dépassé. Le serveur ne répond pas.');
+        setErrorMsg('انتهت مهلة الانتظار. الخادم لا يستجيب.');
       } else {
-        setErrorMsg('Impossible de contacter le serveur. Vérifiez que le serveur est démarré.');
+        setErrorMsg('تعذر الاتصال بالخادم. تحقق من تشغيل الخادم.');
       }
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto" dir="rtl">
       <div className="glass-panel border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden my-auto">
         
         {/* Glow Effects */}
@@ -62,13 +62,13 @@ export default function LoginModal({ onLogin }) {
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="inline-flex p-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg mb-2">
-            <img src="/favicon.png" alt="Logo PI" className="w-10 h-10 object-contain" />
+            <img src="/favicon.png" alt="شعار حزب الاستقلال" className="w-10 h-10 object-contain" />
           </div>
           <h2 className="text-xl font-black text-white">
-            Connexion au Système Électoral
+            تسجيل الدخول - نظام الفرز
           </h2>
           <p className="text-xs text-slate-400">
-            Circonscription Électorale de Tan-Tan
+            الدائرة الانتخابية طانطان
           </p>
         </div>
 
@@ -86,14 +86,14 @@ export default function LoginModal({ onLogin }) {
           <div className="space-y-1.5">
             <label className="text-slate-300 font-bold flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-sky-400" />
-              Identifiant / Code Bureau
+              اسم المستخدم / رمز المكتب
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder=""
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition min-h-[46px] text-sm"
+              placeholder="اسم المستخدم"
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition min-h-[46px] text-sm text-right"
               required
               autoFocus
               autoCapitalize="none"
@@ -106,14 +106,14 @@ export default function LoginModal({ onLogin }) {
           <div className="space-y-1.5">
             <label className="text-slate-300 font-bold flex items-center gap-1.5">
               <KeyRound className="w-3.5 h-3.5 text-sky-400" />
-              Mot de Passe
+              كلمة المرور
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder=""
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition min-h-[46px] text-sm"
+              placeholder="كلمة المرور"
+              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 transition min-h-[46px] text-sm text-right"
               required
               autoCapitalize="none"
               autoCorrect="off"
@@ -131,7 +131,7 @@ export default function LoginModal({ onLogin }) {
             ) : (
               <Lock className="w-4 h-4" />
             )}
-            <span>{loading ? 'Connexion en cours...' : 'Se Connecter'}</span>
+            <span>{loading ? 'جاري الاتصال...' : 'دخول'}</span>
           </button>
 
         </form>
