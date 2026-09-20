@@ -881,20 +881,6 @@ export async function deleteUser(id) {
   return { success: true };
 }
 
-export async function deleteUser(id) {
-  await initDb();
-  const row = await getLocal(`SELECT USERNAME FROM UTILISATEURS WHERE ID=?`, [id]);
-  await runLocal(`DELETE FROM UTILISATEURS WHERE ID=?`, [id]);
-
-  if (isSupabaseConfigured() && row) {
-    try {
-      await supabase.from('utilisateurs').delete().eq('username', row.USERNAME);
-    } catch (e) {}
-  }
-
-  return { success: true };
-}
-
 export async function generateAccountsForBureaux() {
   await initDb();
   const bureaux = await queryLocal(`SELECT * FROM BUREAUX_VOTE`);
