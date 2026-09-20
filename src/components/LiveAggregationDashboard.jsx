@@ -249,16 +249,22 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                     </td>
                     <td className="p-2 sm:p-3">
                       <div className="flex items-center gap-2.5">
-                        <div 
-                          className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex-shrink-0 shadow-sm" 
-                          style={{ backgroundColor: p.couleur_hex }}
-                        ></div>
+                        {isPi ? (
+                          <div className="w-6 h-6 p-0.5 bg-gradient-to-br from-sky-500/30 via-slate-900 to-blue-900/60 border border-sky-400/50 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md shadow-sky-500/20 ring-1 ring-sky-400/30">
+                            <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-sm" />
+                          </div>
+                        ) : (
+                          <div 
+                            className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex-shrink-0 shadow-sm" 
+                            style={{ backgroundColor: p.couleur_hex }}
+                          ></div>
+                        )}
                         <div className="min-w-0">
                           <div className="font-extrabold text-white text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
                             <span className="text-sky-300 font-black">{p.nom_arabe || p.nom_parti}</span>
                             <span className="text-slate-400 font-bold text-[11px]">({p.code})</span>
                             {isPi && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[9px] font-black tracking-wider uppercase shadow-sm">
                                 ★ حزب الاستقلال
                               </span>
                             )}

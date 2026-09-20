@@ -56,20 +56,22 @@ export default function LoginModal({ onLogin }) {
       <div className="glass-panel border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden my-auto">
         
         {/* Glow Effects */}
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="absolute -top-12 -right-12 w-40 h-40 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex p-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg mb-2">
-            <img src="/favicon.png" alt="شعار حزب الاستقلال" className="w-10 h-10 object-contain" />
+        {/* Header with Enlarged Logo & Gradient Background Container */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex p-3 sm:p-4 bg-gradient-to-br from-sky-500/25 via-slate-900 to-blue-950/90 border border-sky-400/40 rounded-3xl shadow-2xl shadow-sky-500/25 mb-1 ring-1 ring-white/15 hover:scale-105 transition-transform duration-300">
+            <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-xl" />
           </div>
-          <h2 className="text-xl font-black text-white">
+          <h2 className="text-xl sm:text-2xl font-black text-white">
             تسجيل الدخول - نظام الفرز
           </h2>
-          <p className="text-xs text-slate-400">
-            الدائرة الانتخابية طانطان
-          </p>
+          <div className="text-xs text-sky-400 font-extrabold uppercase tracking-wider flex items-center justify-center gap-1.5">
+            <span>★ حزب الاستقلال</span>
+            <span className="text-slate-500">•</span>
+            <span className="text-slate-300">الدائرة الانتخابية طانطان</span>
+          </div>
         </div>
 
         {/* Error Notification */}
