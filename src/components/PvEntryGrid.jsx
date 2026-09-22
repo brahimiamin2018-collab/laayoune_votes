@@ -134,6 +134,16 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       numero_bureau: session.bureau_details.numero_bureau
     } : null);
 
+  // Automatic calculation of suffrages exprimés: votants - (nuls + blancs)
+  useEffect(() => {
+    if (!isLocked && votants !== '') {
+      const calc = Math.max(0, numVotants - (numNuls + numBlancs));
+      setExprimes(calc.toString());
+    }
+  }, [votants, nuls, blancs, isLocked]);
+
+  const isPartisVotesMatch = totalVotesPartis === numExprimes && numExprimes > 0;
+
   const handleAutoCalcExprimes = () => {
     if (isLocked) return;
     setExprimes(calculatedExprimes.toString());
@@ -463,15 +473,9 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="text-slate-300 font-semibold">الأصوات المعبر عنها</label>
-                      {!isLocked && (
-                        <button
-                          type="button"
-                          onClick={handleAutoCalcExprimes}
-                          className="text-[10px] text-sky-400 underline font-extrabold hover:text-sky-300"
-                        >
-                          تلقائي
-                        </button>
-                      )}
+                      <span className="text-[10px] text-sky-300 font-black bg-sky-500/15 px-2 py-0.5 rounded-lg border border-sky-500/30">
+                        حساب تلقائي
+                      </span>
                     </div>
                     <input
                       type="number"
@@ -482,10 +486,10 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       disabled={isLocked}
                       onChange={(e) => setExprimes(e.target.value)}
                       placeholder="0"
-                      className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl font-extrabold text-sm focus:outline-none ${
                         isLocked
                           ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
-                          : 'bg-slate-950 border border-slate-800 text-white focus:border-sky-500'
+                          : 'bg-slate-950 border border-sky-500/40 text-sky-200 focus:border-sky-400'
                       }`}
                       required
                     />
@@ -495,19 +499,46 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
               {/* Step 2: Partis Votes */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                     <Vote className="w-4 h-4 text-sky-400" />
                     <span>2. إدخال أصوات الأحزاب السياسية</span>
                   </h4>
                   
-                  <div className="text-xs font-semibold">
+                  <div className="text-xs font-semibold flex items-center gap-2">
                     <span className="text-slate-400">مجموع أصوات الأحزاب : </span>
-                    <span className="font-extrabold text-sky-300">
-                      {totalVotesPartis} صوت
+                    <span className={`font-black px-2.5 py-0.5 rounded-lg border transition ${
+                      numExprimes === 0
+                        ? 'bg-slate-900 border-slate-800 text-slate-400'
+                        : isPartisVotesMatch
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                        : 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                    }`}>
+                      {totalVotesPartis} / {numExprimes} معبر عنها
                     </span>
                   </div>
                 </div>
+
+                {numExprimes > 0 && (
+                  <div className={`p-2.5 rounded-xl border text-[11px] font-bold flex items-center justify-between gap-2 transition ${
+                    isPartisVotesMatch
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                      : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      {isPartisVotesMatch ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                      )}
+                      <span>
+                        {isPartisVotesMatch
+                          ? `مجموع أصوات الأحزاب (${totalVotesPartis}) مطابق تماماً للأصوات المعبر عنها (${numExprimes}).`
+                          : `تفاوت : مجموع أصوات الأحزاب (${totalVotesPartis}) لا يساوي الأصوات المعبر عنها (${numExprimes}). الفرق: ${Math.abs(totalVotesPartis - numExprimes)} صوت.`}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {partis.map((p) => {
