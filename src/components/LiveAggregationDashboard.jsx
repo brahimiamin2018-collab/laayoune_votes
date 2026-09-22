@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, Award, Users, CheckCircle2, FileSpreadsheet, RefreshCw, Filter, Vote } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
   const [data, setData] = useState(null);
@@ -220,66 +221,79 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                 <th className="p-3 sm:p-4 text-left">النسبة %</th>
               </tr>
             </thead>
-            <tbody className="divide-y-2 divide-slate-800 font-bold text-white">
-              {filteredParties.map((p, idx) => {
-                const isPi = p.code === 'PI';
-                return (
-                  <tr key={p.id} className={`transition ${
-                    isPi 
-                      ? 'bg-gradient-to-r from-sky-950/90 via-blue-900/50 to-slate-900 border-r-8 border-r-sky-400 shadow-2xl ring-2 ring-sky-400/50' 
-                      : 'hover:bg-slate-800/80 bg-slate-900/60'
-                  }`}>
-                    <td className="p-3 sm:p-4 text-center text-slate-200 font-black text-sm sm:text-base">
-                      #{idx + 1}
-                    </td>
-                    <td className="p-3 sm:p-4">
-                      <div className="flex items-center gap-3">
-                        {isPi ? (
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 p-1 bg-gradient-to-br from-sky-500/40 via-slate-900 to-blue-900/80 border-2 border-sky-400 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-sky-500/30 ring-2 ring-sky-400/40">
-                            <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-md" />
-                          </div>
-                        ) : (
-                          <div 
-                            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex-shrink-0 shadow-md border border-white/20" 
-                            style={{ backgroundColor: p.couleur_hex }}
-                          ></div>
-                        )}
-                        <div className="min-w-0">
-                          <div className="font-black text-white text-sm sm:text-base md:text-lg flex items-center gap-2 flex-wrap">
-                            <span className="text-sky-300 font-black drop-shadow-sm">{p.nom_arabe || p.nom_parti}</span>
-                            <span className="text-slate-300 font-extrabold text-xs sm:text-sm">({p.code})</span>
-                            {isPi && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/30 text-sky-200 border border-sky-400 text-xs font-black tracking-wider uppercase shadow-md">
-                                ★ حزب الاستقلال
-                              </span>
+            <tbody className="divide-y-2 divide-slate-800 font-bold text-white relative">
+              <AnimatePresence mode="popLayout">
+                {filteredParties.map((p, idx) => {
+                  const isPi = p.code === 'PI';
+                  return (
+                    <motion.tr 
+                      key={p.id}
+                      layout
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -15 }}
+                      transition={{
+                        layout: { type: "spring", stiffness: 35, damping: 16, mass: 1.2 },
+                        opacity: { duration: 0.8 }
+                      }}
+                      className={`transition-colors duration-500 ${
+                        isPi 
+                          ? 'bg-gradient-to-r from-sky-950/90 via-blue-900/50 to-slate-900 border-r-8 border-r-sky-400 shadow-2xl ring-2 ring-sky-400/50' 
+                          : 'hover:bg-slate-800/80 bg-slate-900/60'
+                      }`}
+                    >
+                      <td className="p-3 sm:p-4 text-center text-slate-200 font-black text-sm sm:text-base">
+                        #{idx + 1}
+                      </td>
+                      <td className="p-3 sm:p-4">
+                        <div className="flex items-center gap-3">
+                          {isPi ? (
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 p-1 bg-gradient-to-br from-sky-500/40 via-slate-900 to-blue-900/80 border-2 border-sky-400 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-sky-500/30 ring-2 ring-sky-400/40">
+                              <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-md" />
+                            </div>
+                          ) : (
+                            <div 
+                              className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex-shrink-0 shadow-md border border-white/20" 
+                              style={{ backgroundColor: p.couleur_hex }}
+                            ></div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="font-black text-white text-sm sm:text-base md:text-lg flex items-center gap-2 flex-wrap">
+                              <span className="text-sky-300 font-black drop-shadow-sm">{p.nom_arabe || p.nom_parti}</span>
+                              <span className="text-slate-300 font-extrabold text-xs sm:text-sm">({p.code})</span>
+                              {isPi && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/30 text-sky-200 border border-sky-400 text-xs font-black tracking-wider uppercase shadow-md">
+                                  ★ حزب الاستقلال
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-slate-300 font-semibold truncate max-w-[180px] sm:max-w-[320px]">
+                              {p.nom_parti}
+                            </div>
+                            {p.tete_liste && (
+                              <div className="text-xs text-amber-300 font-extrabold sm:hidden mt-0.5 flex items-center gap-1">
+                                <span className="text-slate-400 font-normal">وكيل اللائحة:</span>
+                                <span>{p.tete_liste}</span>
+                              </div>
                             )}
                           </div>
-                          <div className="text-xs text-slate-300 font-semibold truncate max-w-[180px] sm:max-w-[320px]">
-                            {p.nom_parti}
-                          </div>
-                          {p.tete_liste && (
-                            <div className="text-xs text-amber-300 font-extrabold sm:hidden mt-0.5 flex items-center gap-1">
-                              <span className="text-slate-400 font-normal">وكيل اللائحة:</span>
-                              <span>{p.tete_liste}</span>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-3 sm:p-4 text-right">
-                      <span className={isPi ? "text-sky-200 font-black text-sm sm:text-base" : "text-slate-200 font-bold text-xs sm:text-sm"}>
-                        {p.tete_liste || 'غير محدد'}
-                      </span>
-                    </td>
-                    <td className="p-3 sm:p-4 text-left font-black text-amber-300 text-base sm:text-xl md:text-2xl whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                      {p.total_voix.toLocaleString('ar-MA')}
-                    </td>
-                    <td className={`p-3 sm:p-4 text-left font-black whitespace-nowrap ${isPi ? 'text-sky-300 text-base sm:text-lg drop-shadow-sm' : 'text-sky-400 text-sm sm:text-base'}`}>
-                      {p.pourcentage}%
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                      <td className="p-3 sm:p-4 text-right">
+                        <span className={isPi ? "text-sky-200 font-black text-sm sm:text-base" : "text-slate-200 font-bold text-xs sm:text-sm"}>
+                          {p.tete_liste || 'غير محدد'}
+                        </span>
+                      </td>
+                      <td className="p-3 sm:p-4 text-left font-black text-amber-300 text-base sm:text-xl md:text-2xl whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                        {p.total_voix.toLocaleString('ar-MA')}
+                      </td>
+                      <td className={`p-3 sm:p-4 text-left font-black whitespace-nowrap ${isPi ? 'text-sky-300 text-base sm:text-lg drop-shadow-sm' : 'text-sky-400 text-sm sm:text-base'}`}>
+                        {p.pourcentage}%
+                      </td>
+                    </motion.tr>
+                  );
+                })}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>
