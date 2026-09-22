@@ -111,8 +111,8 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
               onChange={(e) => setSelectedCommune(e.target.value)}
               className="bg-transparent text-white font-extrabold focus:outline-none cursor-pointer text-xs sm:text-sm"
             >
-              <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (174 مكتب تصويت)</option>
-              <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (81 مكتب تصويت)</option>
+              <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (175 مكتب تصويت)</option>
+              <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (82 مكتب تصويت)</option>
               <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
               <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
               <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
