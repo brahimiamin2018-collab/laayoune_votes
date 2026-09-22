@@ -198,10 +198,10 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
           </div>
           <div className="text-lg sm:text-2xl lg:text-3xl font-black text-amber-300 truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            {topParty ? `${topParty.nom_arabe || topParty.code} (${topParty.total_voix})` : 'لا يوجد'}
+            {topParty ? (topParty.nom_arabe || topParty.code) : 'لا يوجد'}
           </div>
-          <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1 truncate">
-            {topParty ? `${topParty.code} - ${topParty.nom_parti}` : 'في انتظار المحاضر'}
+          <div className="text-xs sm:text-sm font-black text-amber-200 mt-1 truncate">
+            {topParty ? `${(topParty.total_voix || 0).toLocaleString('ar-MA')} صوت` : 'في انتظار المحاضر'}
           </div>
         </div>
 
