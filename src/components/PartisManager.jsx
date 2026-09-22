@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Award, X, Palette } from 'lucide-react';
+import PartySymbol from './PartySymbol';
 
 export default function PartisManager() {
   const [partis, setPartis] = useState([]);
@@ -143,10 +144,7 @@ export default function PartisManager() {
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2.5">
-                <div 
-                  className="w-5 h-5 rounded-full flex-shrink-0 shadow-md"
-                  style={{ backgroundColor: p.couleur_hex }}
-                ></div>
+                <PartySymbol code={p.code} couleurHex={p.couleur_hex} logoIcon={p.logo_icon} size="md" />
                 <div>
                   <div className="text-base font-extrabold text-white flex items-center gap-2">
                     <span>{p.nom_arabe || p.nom_parti}</span>

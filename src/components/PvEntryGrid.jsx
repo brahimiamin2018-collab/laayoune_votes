@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, AlertTriangle, CheckCircle2, RefreshCw, Calculator, FileText, Search, Building2, Vote, Lock, Unlock, X, ShieldAlert, Trash2 } from 'lucide-react';
+import PartySymbol from './PartySymbol';
 
 export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }) {
   const [bureaux, setBureaux] = useState([]);
@@ -549,10 +550,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                         className="p-3 bg-slate-950/90 border border-slate-800 rounded-xl flex items-center justify-between gap-3 hover:border-slate-700 transition"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div 
-                            className="w-4 h-4 rounded-full flex-shrink-0 shadow-sm"
-                            style={{ backgroundColor: p.couleur_hex }}
-                          ></div>
+                          <PartySymbol code={p.code} couleurHex={p.couleur_hex} logoIcon={p.logo_icon} size="sm" />
                           <div className="min-w-0">
                             <div className="font-bold text-white text-xs truncate flex items-center gap-1.5">
                               <span className="text-sky-300 font-black">{p.nom_arabe || p.nom_parti}</span>

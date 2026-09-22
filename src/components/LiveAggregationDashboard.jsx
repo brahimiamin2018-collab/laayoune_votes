@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart3, Award, Users, CheckCircle2, FileSpreadsheet, RefreshCw, Filter, Vote } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import PartySymbol from './PartySymbol';
 
 export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
   const [data, setData] = useState(null);
@@ -197,11 +198,16 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             <span>الحزب المتصدر</span>
             <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
           </div>
-          <div className="text-lg sm:text-2xl lg:text-3xl font-black text-amber-300 truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            {topParty ? (topParty.nom_arabe || topParty.code) : 'لا يوجد'}
-          </div>
-          <div className="text-xs sm:text-sm font-black text-amber-200 mt-1 truncate">
-            {topParty ? `${(topParty.total_voix || 0).toLocaleString('ar-MA')} صوت` : 'في انتظار المحاضر'}
+          <div className="flex items-center gap-3">
+            {topParty && <PartySymbol code={topParty.code} couleurHex={topParty.couleur_hex} logoIcon={topParty.logo_icon} size="lg" />}
+            <div className="min-w-0 flex-1">
+              <div className="text-lg sm:text-2xl lg:text-3xl font-black text-amber-300 truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                {topParty ? (topParty.nom_arabe || topParty.code) : 'لا يوجد'}
+              </div>
+              <div className="text-xs sm:text-sm font-black text-amber-200 mt-0.5 truncate">
+                {topParty ? `${(topParty.total_voix || 0).toLocaleString('ar-MA')} صوت` : 'في انتظار المحاضر'}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -247,16 +253,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
                       </td>
                       <td className="p-3 sm:p-4">
                         <div className="flex items-center gap-3">
-                          {isPi ? (
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 p-1 bg-gradient-to-br from-sky-500/40 via-slate-900 to-blue-900/80 border-2 border-sky-400 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-sky-500/30 ring-2 ring-sky-400/40">
-                              <img src="/pi.png" alt="شعار حزب الاستقلال" className="w-full h-full object-contain filter drop-shadow-md" />
-                            </div>
-                          ) : (
-                            <div 
-                              className="w-4 h-4 sm:w-5 sm:h-5 rounded-full flex-shrink-0 shadow-md border border-white/20" 
-                              style={{ backgroundColor: p.couleur_hex }}
-                            ></div>
-                          )}
+                          <PartySymbol code={p.code} couleurHex={p.couleur_hex} logoIcon={p.logo_icon} size="md" />
                           <div className="min-w-0">
                             <div className="font-black text-white text-sm sm:text-base md:text-lg flex items-center gap-2 flex-wrap">
                               <span className="text-sky-300 font-black drop-shadow-sm">{p.nom_arabe || p.nom_parti}</span>
