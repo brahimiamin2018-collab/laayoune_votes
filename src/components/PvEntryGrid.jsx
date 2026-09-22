@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, AlertTriangle, CheckCircle2, RefreshCw, Calculator, FileText, Search, Building2, Vote } from 'lucide-react';
+import { Save, AlertTriangle, CheckCircle2, RefreshCw, Calculator, FileText, Search, Building2, Vote, Lock, Unlock, X, ShieldAlert } from 'lucide-react';
 
 export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }) {
   const [bureaux, setBureaux] = useState([]);
@@ -18,6 +18,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [statusMsg, setStatusMsg] = useState(null);
 
   // Load parties list always, and bureaux list only for Admin
@@ -85,6 +87,12 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
             });
           }
           setVotesByParti(initialVotes);
+          // Lock entry if PV was already validated and saved
+          if (data.pv.est_valide || data.pv.suffrages_exprimes > 0) {
+            setIsLocked(true);
+          } else {
+            setIsLocked(false);
+          }
         } else {
           resetForm();
         }
@@ -101,6 +109,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
     setExprimes('');
     setVotesByParti({});
     setStatusMsg(null);
+    setIsLocked(false);
   };
 
   const numVotants = parseInt(votants) || 0;
@@ -121,29 +130,33 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       code_bureau: session.bureau_details.code_bureau,
       commune: session.bureau_details.commune,
       centre_vote: session.bureau_details.centre_vote,
-      numero_bureau: session.bureau_details.numero_bureau,
-      nombre_inscrits: session.bureau_details.nombre_inscrits
+      numero_bureau: session.bureau_details.numero_bureau
     } : null);
 
-  const numInscrits = selectedBureauObj?.nombre_inscrits || 0;
-
-  const isVotantsValid = numVotants <= numInscrits || numInscrits === 0;
   const isExprimesMatch = numExprimes === calculatedExprimes && numVotants > 0;
   const isPartisVotesMatch = totalVotesPartis === numExprimes && numExprimes > 0;
-  const isFullyValid = isVotantsValid && isExprimesMatch && isPartisVotesMatch;
+  const isFullyValid = isExprimesMatch && isPartisVotesMatch;
 
   const handleAutoCalcExprimes = () => {
+    if (isLocked) return;
     setExprimes(calculatedExprimes.toString());
   };
 
   const handleVoteChange = (partiId, val) => {
+    if (isLocked) return;
     setVotesByParti(prev => ({ ...prev, [partiId]: val }));
   };
 
-  const handleSubmitPv = async (e) => {
+  // Step 1: Open Confirmation Modal
+  const handlePreSubmitPv = (e) => {
     e.preventDefault();
-    if (!selectedBureauId) return;
+    if (!selectedBureauId || isLocked) return;
+    setShowConfirmModal(true);
+  };
 
+  // Step 2: Execute Save PV after confirmation
+  const executeSavePv = async () => {
+    setShowConfirmModal(false);
     setSaving(true);
     setStatusMsg(null);
 
@@ -167,7 +180,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       if (res.ok) {
         const json = await res.json();
         if (json.est_valide) {
-          setStatusMsg({ type: 'success', text: 'تم حفظ المحضر والتحقق منه بنجاح!' });
+          setStatusMsg({ type: 'success', text: 'تم حفظ وتأكيد المحضر وإقفال إدخال البيانات لهذا المكتب بنجاح!' });
+          setIsLocked(true);
         } else {
           setStatusMsg({ type: 'warning', text: `تم حفظ المحضر مع ملاحظة: ${json.note_anomalie}` });
         }
@@ -301,8 +315,28 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
         <div className={isRestricted ? "w-full" : "lg:col-span-8"}>
           
           {selectedBureauObj ? (
-            <form onSubmit={handleSubmitPv} className="glass-panel p-5 sm:p-6 rounded-2xl border border-slate-800 space-y-6 shadow-2xl">
+            <form onSubmit={handlePreSubmitPv} className="glass-panel p-5 sm:p-6 rounded-2xl border border-slate-800 space-y-6 shadow-2xl">
               
+              {/* Lock Banner if PV is confirmed */}
+              {isLocked && (
+                <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/40 rounded-2xl text-emerald-300 text-xs font-extrabold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-4.5 h-4.5 text-emerald-400 flex-shrink-0" />
+                    <span>تم تأكيد وقفل المحضر النهائي لهذا المكتب. الأرقام محفورة ومحفوظة ضد التعديل.</span>
+                  </div>
+                  {session?.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => setIsLocked(false)}
+                      className="px-3.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl text-[11px] font-black flex items-center gap-1.5 transition flex-shrink-0"
+                    >
+                      <Unlock className="w-3.5 h-3.5" />
+                      <span>إلغاء التجميد للتعديل (مدير)</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Form Title & Bureau Info */}
               <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
                 <div>
@@ -314,12 +348,17 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     <span className="text-sky-300 font-bold">• مكتب رقم {selectedBureauObj.numero_bureau} ({selectedBureauObj.code_bureau})</span>
                   </h3>
                   <div className="text-xs text-slate-400 mt-1">
-                    جماعة <strong className="text-white">{selectedBureauObj.commune}</strong> • عدد الناخبين المسجلين: <strong className="text-sky-300 font-bold">{numInscrits}</strong>
+                    جماعة <strong className="text-white">{selectedBureauObj.commune}</strong>
                   </div>
                 </div>
 
                 <div className="flex-shrink-0">
-                  {isFullyValid ? (
+                  {isLocked ? (
+                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-black shadow-md shadow-emerald-500/10">
+                      <Lock className="w-4 h-4 text-emerald-400" />
+                      <span>محضر مقفل ومؤكد</span>
+                    </div>
+                  ) : isFullyValid ? (
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold shadow-md shadow-emerald-500/10">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       <span>محضر مطابق</span>
@@ -363,9 +402,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       pattern="[0-9]*"
                       min="0"
                       value={votants}
+                      disabled={isLocked}
                       onChange={(e) => setVotants(e.target.value)}
                       placeholder="0"
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-sky-500"
+                      className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
+                        isLocked 
+                          ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
+                          : 'bg-slate-950 border border-slate-800 text-white focus:border-sky-500'
+                      }`}
                       required
                     />
                   </div>
@@ -378,9 +422,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       pattern="[0-9]*"
                       min="0"
                       value={nuls}
+                      disabled={isLocked}
                       onChange={(e) => setNuls(e.target.value)}
                       placeholder="0"
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-sky-500"
+                      className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
+                        isLocked 
+                          ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
+                          : 'bg-slate-950 border border-slate-800 text-white focus:border-sky-500'
+                      }`}
                     />
                   </div>
 
@@ -392,22 +441,29 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       pattern="[0-9]*"
                       min="0"
                       value={blancs}
+                      disabled={isLocked}
                       onChange={(e) => setBlancs(e.target.value)}
                       placeholder="0"
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-sky-500"
+                      className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
+                        isLocked 
+                          ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
+                          : 'bg-slate-950 border border-slate-800 text-white focus:border-sky-500'
+                      }`}
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="text-slate-300 font-semibold">الأصوات المعبر عنها</label>
-                      <button
-                        type="button"
-                        onClick={handleAutoCalcExprimes}
-                        className="text-[10px] text-sky-400 underline font-extrabold hover:text-sky-300"
-                      >
-                        تلقائي
-                      </button>
+                      {!isLocked && (
+                        <button
+                          type="button"
+                          onClick={handleAutoCalcExprimes}
+                          className="text-[10px] text-sky-400 underline font-extrabold hover:text-sky-300"
+                        >
+                          تلقائي
+                        </button>
+                      )}
                     </div>
                     <input
                       type="number"
@@ -415,10 +471,13 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       pattern="[0-9]*"
                       min="0"
                       value={exprimes}
+                      disabled={isLocked}
                       onChange={(e) => setExprimes(e.target.value)}
                       placeholder="0"
-                      className={`w-full px-3.5 py-2.5 bg-slate-950 border rounded-xl text-white font-bold text-sm focus:outline-none ${
-                        isExprimesMatch ? 'border-emerald-500/50 text-emerald-300' : 'border-amber-500/50 text-amber-300'
+                      className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
+                        isLocked
+                          ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
+                          : isExprimesMatch ? 'bg-slate-950 border border-emerald-500/50 text-emerald-300' : 'bg-slate-950 border border-amber-500/50 text-amber-300'
                       }`}
                       required
                     />
@@ -489,9 +548,14 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                           pattern="[0-9]*"
                           min="0"
                           value={partyVote}
+                          disabled={isLocked}
                           onChange={(e) => handleVoteChange(p.id, e.target.value)}
                           placeholder="0"
-                          className="w-24 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-left font-extrabold text-white text-sm focus:outline-none focus:border-sky-500"
+                          className={`w-24 px-3 py-1.5 rounded-xl text-left font-extrabold text-sm focus:outline-none ${
+                            isLocked 
+                              ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
+                              : 'bg-slate-900 border border-slate-700 text-white focus:border-sky-500'
+                          }`}
                         />
                       </div>
                     );
@@ -500,27 +564,39 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4 border-t border-slate-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
-                >
-                  إعادة ضبط
-                </button>
+              <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+                {!isLocked && (
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
+                  >
+                    إعادة ضبط
+                  </button>
+                )}
 
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs shadow-lg transition ${
-                    isFullyValid
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/20'
-                      : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-sky-500/20'
-                  }`}
-                >
-                  {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>{saving ? 'جاري الحفظ...' : 'حفظ المحضر'}</span>
-                </button>
+                <div className="mr-auto">
+                  <button
+                    type="submit"
+                    disabled={saving || isLocked}
+                    className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs shadow-lg transition ${
+                      isLocked
+                        ? 'bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed'
+                        : isFullyValid
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/20'
+                        : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-sky-500/20'
+                    }`}
+                  >
+                    {saving ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : isLocked ? (
+                      <Lock className="w-4 h-4 text-slate-400" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    <span>{saving ? 'جاري الحفظ...' : isLocked ? 'المحضر مقفل ومؤكد' : 'تأكيد وقفل المحضر'}</span>
+                  </button>
+                </div>
               </div>
 
             </form>
@@ -534,6 +610,89 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
         </div>
 
       </div>
+
+      {/* Confirmation Modal before locking & saving PV */}
+      {showConfirmModal && selectedBureauObj && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto" dir="rtl">
+          <div className="glass-panel border-2 border-sky-400/40 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative my-auto bg-slate-900">
+            
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-6 h-6 text-amber-400 flex-shrink-0" />
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-white">
+                    تأكيد وقفل نتائج المحضر
+                  </h3>
+                  <div className="text-xs text-sky-300 font-bold">
+                    {selectedBureauObj.centre_vote} - مكتب رقم {selectedBureauObj.numero_bureau}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="p-1.5 hover:bg-slate-800 text-slate-400 rounded-xl transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-200 text-xs font-semibold">
+              ⚠️ <strong>تنبيه هام:</strong> يرجى مراجعة وتأكيد الأرقام أسفله. بعد الضغط على زر "تأكيد وقفل المحضر"، سيتم تجميد البيانات وقفل الإدخال لهذا المكتب لمنع الأخطاء.
+            </div>
+
+            {/* Summary Box */}
+            <div className="space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-xs text-slate-200">
+              <div className="flex justify-between border-b border-slate-800 pb-2 font-bold">
+                <span>عدد المصوتين:</span>
+                <span className="text-white font-black text-sm">{numVotants}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800 pb-2">
+                <span className="text-slate-400">الملغاة / البيضاء:</span>
+                <span>{numNuls} ملغاة / {numBlancs} بيضاء</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-800 pb-2 font-bold">
+                <span className="text-emerald-400">الأصوات المعبر عنها:</span>
+                <span className="text-emerald-300 font-black text-sm">{numExprimes}</span>
+              </div>
+
+              <div className="pt-1">
+                <div className="font-extrabold text-sky-400 mb-2">توزيع أصوات الأحزاب:</div>
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  {partis.map(p => {
+                    const v = votesByParti[p.id] || 0;
+                    return (
+                      <div key={p.id} className="flex items-center justify-between p-1.5 bg-slate-900 rounded-lg border border-slate-800">
+                        <span className="truncate font-bold text-white">{p.nom_arabe || p.code}:</span>
+                        <span className="font-black text-amber-300 text-xs">{v}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition"
+              >
+                تراجع وتعديل
+              </button>
+
+              <button
+                type="button"
+                onClick={executeSavePv}
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition"
+              >
+                <Lock className="w-4 h-4" />
+                <span>تأكيد وقفل المحضر النهائي</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

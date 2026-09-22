@@ -229,7 +229,6 @@ export default function BureauxManager() {
                 <th className="py-3 px-4">رقم المكتب</th>
                 <th className="py-3 px-4">الجماعة</th>
                 <th className="py-3 px-4">مركز التصويت</th>
-                <th className="py-3 px-4 text-left">عدد المسجلين</th>
                 <th className="py-3 px-4 text-center">حالة الفرز</th>
                 <th className="py-3 px-4 text-left">إجراءات</th>
               </tr>
@@ -242,7 +241,6 @@ export default function BureauxManager() {
                     <td className="py-3 px-4 font-extrabold text-white">مكتب رقم {b.numero_bureau}</td>
                     <td className="py-3 px-4 text-slate-300">{b.commune}</td>
                     <td className="py-3 px-4 text-slate-200 font-medium">{b.centre_vote}</td>
-                    <td className="py-3 px-4 text-left font-bold text-white">{b.nombre_inscrits?.toLocaleString('ar-MA')}</td>
                     <td className="py-3 px-4 text-center">
                       {b.has_pv ? (
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -358,19 +356,6 @@ export default function BureauxManager() {
                   onChange={(e) => setCentreVote(e.target.value)}
                   placeholder="مثال: مدرسة المسيرة"
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-sky-500 text-right"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">عدد الناخبين المسجلين</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={nombreInscrits}
-                  onChange={(e) => setNombreInscrits(e.target.value)}
-                  placeholder="450"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-bold focus:outline-none focus:border-sky-500 text-right"
                   required
                 />
               </div>

@@ -174,7 +174,7 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
             {(data?.total_votants || 0).toLocaleString('ar-MA')}
           </div>
           <div className="text-xs sm:text-sm font-bold text-slate-200 mt-1 truncate">
-            المشاركة : <strong className="text-sky-300 font-black">{data?.taux_participation || 0}%</strong>
+            مجموع أوراق المصوتين
           </div>
         </div>
 
