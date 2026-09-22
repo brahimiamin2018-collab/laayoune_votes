@@ -131,23 +131,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-sky-400' : ''}`} />
           </button>
-
-          <button
-            onClick={exportToExcel}
-            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-extrabold transition shadow-lg shadow-emerald-600/30 border border-emerald-400/40"
-          >
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>تصدير إكسيل</span>
-          </button>
-
-          <button
-            onClick={exportCloudBackup}
-            className="flex items-center gap-1.5 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs sm:text-sm font-extrabold transition shadow-lg shadow-sky-600/30 border border-sky-400/40"
-            title="حفظ نسخة احتياطية من قاعدة البيانات"
-          >
-            <Vote className="w-4 h-4" />
-            <span>نسخة احتياطية</span>
-          </button>
         </div>
       </div>
 
