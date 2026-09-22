@@ -15,6 +15,7 @@ import {
   deleteBureauVote,
   getPvResult,
   savePvResult,
+  clearPvResult,
   getVotesAggregation,
   loginUser,
   getUsers,
@@ -132,6 +133,16 @@ app.get('/api/depouillement/pv/:bureau_id', async (req, res) => {
 app.post('/api/depouillement/pv', async (req, res) => {
   try {
     const result = await savePvResult(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Clear/Delete PV (Admin Only)
+app.delete('/api/depouillement/pv/:bureau_id', async (req, res) => {
+  try {
+    const result = await clearPvResult(req.params.bureau_id);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });

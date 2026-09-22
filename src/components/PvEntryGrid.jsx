@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, AlertTriangle, CheckCircle2, RefreshCw, Calculator, FileText, Search, Building2, Vote, Lock, Unlock, X, ShieldAlert } from 'lucide-react';
+import { Save, AlertTriangle, CheckCircle2, RefreshCw, Calculator, FileText, Search, Building2, Vote, Lock, Unlock, X, ShieldAlert, Trash2 } from 'lucide-react';
 
 export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }) {
   const [bureaux, setBureaux] = useState([]);
@@ -18,6 +18,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [statusMsg, setStatusMsg] = useState(null);
@@ -195,6 +196,33 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       setStatusMsg({ type: 'error', text: err.message });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleClearPv = async () => {
+    if (!selectedBureauId) return;
+    if (!window.confirm('⚠️ هل أنت تأكد من رغبتك في تفريغ وإلغاء كافة بيانات المحضر لهذا المكتب؟\n\nسيتم حذف نتائج أصوات الأحزاب المسجلة وإعادة فتح المكتب لإعادة الإدخال من جديد.')) {
+      return;
+    }
+    setClearing(true);
+    setStatusMsg(null);
+    try {
+      const res = await fetch(`/api/depouillement/pv/${selectedBureauId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        resetForm();
+        setStatusMsg({ type: 'success', text: 'تم تفريغ بيانات المحضر وإعادة فتح المكتب للإدخال بنجاح!' });
+        await loadInitialData();
+        if (onSaveSuccess) onSaveSuccess();
+      } else {
+        const errJson = await res.json();
+        setStatusMsg({ type: 'error', text: errJson.error || 'حدث خطأ أثناء تفريغ بيانات المحضر.' });
+      }
+    } catch (err) {
+      setStatusMsg({ type: 'error', text: err.message });
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -563,17 +591,30 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
-                {!isLocked && (
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
-                  >
-                    إعادة ضبط
-                  </button>
-                )}
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  {!isLocked && (
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
+                    >
+                      إعادة ضبط
+                    </button>
+                  )}
+                  {session?.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={handleClearPv}
+                      disabled={clearing}
+                      className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm"
+                    >
+                      {clearing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5 text-rose-400" />}
+                      <span>{clearing ? 'جاري التفريغ...' : 'تفريغ بيانات المحضر (مدير)'}</span>
+                    </button>
+                  )}
+                </div>
 
                 <div className="mr-auto">
                   <button

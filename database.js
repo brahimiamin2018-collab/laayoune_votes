@@ -12,6 +12,7 @@ import {
   updateBureauSupabase,
   deleteBureauSupabase,
   savePvSupabase,
+  clearPvSupabase,
   addUserSupabase,
   updateUserSupabase,
   deleteUserSupabase
@@ -481,6 +482,19 @@ export async function savePvResult({ bureau_id, votants = 0, nuls = 0, blancs = 
   }
 
   return { success: true, pv_id: pvId, est_valide: estValide === 1, note_anomalie: noteAnomalie };
+}
+
+export async function clearPvResult(bureau_id) {
+  if (isSupabaseConfigured()) {
+    return await clearPvSupabase(bureau_id);
+  }
+  await initDb();
+  const pv = await getLocal(`SELECT ID FROM PV_BUREAUX WHERE BUREAU_ID=?`, [bureau_id]);
+  if (pv) {
+    await runLocal(`DELETE FROM VOTES_PARTIS WHERE PV_ID=?`, [pv.ID]);
+    await runLocal(`DELETE FROM PV_BUREAUX WHERE ID=?`, [pv.ID]);
+  }
+  return { success: true };
 }
 
 export async function getVotesAggregation({ commune = '' } = {}) {

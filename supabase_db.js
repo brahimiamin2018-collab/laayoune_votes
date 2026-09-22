@@ -287,3 +287,13 @@ export async function deleteUserSupabase(id) {
   if (error) throw error;
   return { success: true };
 }
+
+export async function clearPvSupabase(bureau_id) {
+  const bId = parseInt(bureau_id);
+  const { data: pv } = await supabase.from('pv_bureaux').select('id').eq('bureau_id', bId).maybeSingle();
+  if (pv) {
+    await supabase.from('votes_partis').delete().eq('pv_id', pv.id);
+    await supabase.from('pv_bureaux').delete().eq('id', pv.id);
+  }
+  return { success: true };
+}
