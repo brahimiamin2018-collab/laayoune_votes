@@ -11,7 +11,9 @@ const partySymbolImages = {
   'UC': '/symbols/UC.png',
   'PJD': '/symbols/PJD.png',
   'FGD': '/symbols/FGD.png',
-  'MDS': '/symbols/MDS.jpg'
+  'MDS': '/symbols/MDS.jpg',
+  'UMD': '/symbols/UMD.jpg',
+  'PE': '/symbols/PE.png'
 };
 
 export default function PartySymbol({ code, couleurHex, logoIcon, size = "md" }) {

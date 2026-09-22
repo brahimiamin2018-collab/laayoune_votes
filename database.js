@@ -146,12 +146,27 @@ export async function initDb() {
         { code: 'UC', nom: 'Union Constitutionnelle', nom_ar: 'الاتحاد الدستوري', sigle_ar: 'دستوري', couleur: '#EA580C', tete: 'Candidat UC Tan-Tan', ordre: 7 },
         { code: 'PJD', nom: 'Parti de la Justice et du Développement', nom_ar: 'حزب العدالة والتنمية', sigle_ar: 'عدالة وتنمية', couleur: '#15803D', tete: 'Candidat PJD Tan-Tan', ordre: 8 },
         { code: 'FGD', nom: 'Fédération de la Gauche Démocratique', nom_ar: 'فيدرالية اليسار الديمقراطي', sigle_ar: 'يسار', couleur: '#B91C1C', tete: 'Candidat FGD Tan-Tan', ordre: 9 },
-        { code: 'MDS', nom: 'Mouvement Démocratique et Social', nom_ar: 'الحركة الديمقراطية والاجتماعية', sigle_ar: 'حركة ديمقراطية', couleur: '#854D0E', tete: 'Candidat MDS Tan-Tan', ordre: 10 }
+        { code: 'MDS', nom: 'Mouvement Démocratique et Social', nom_ar: 'الحركة الديمقراطية والاجتماعية', sigle_ar: 'حركة ديمقراطية', couleur: '#854D0E', tete: 'Candidat MDS Tan-Tan', ordre: 10 },
+        { code: 'UMD', nom: 'Union Marocaine pour la Démocratie', nom_ar: 'حزب الاتحاد المغربي للديمقراطية', sigle_ar: 'اتحاد ديمقراطي', couleur: '#D97706', tete: 'Candidat UMD Tan-Tan', ordre: 11 },
+        { code: 'PE', nom: 'Parti de l\'Espoir', nom_ar: 'حزب الأمل', sigle_ar: 'أمل', couleur: '#059669', tete: 'Candidat PE Tan-Tan', ordre: 12 }
       ];
 
       for (const p of defaultPartis) {
         await runLocal(`INSERT INTO PARTIS_POLITIQUES (CODE, NOM_PARTI, NOM_ARABE, SIGLE_ARABE, COULEUR_HEX, TETE_LISTE, ORDRE_AFFICHAGE) VALUES (?, ?, ?, ?, ?, ?, ?)`,
           [p.code, p.nom, p.nom_ar, p.sigle_ar, p.couleur, p.tete, p.ordre]);
+      }
+    } else {
+      // Ensure UMD and PE are present
+      const newPartis = [
+        { code: 'UMD', nom: 'Union Marocaine pour la Démocratie', nom_ar: 'حزب الاتحاد المغربي للديمقراطية', sigle_ar: 'اتحاد ديمقراطي', couleur: '#D97706', tete: 'Candidat UMD Tan-Tan', ordre: 11 },
+        { code: 'PE', nom: 'Parti de l\'Espoir', nom_ar: 'حزب الأمل', sigle_ar: 'أمل', couleur: '#059669', tete: 'Candidat PE Tan-Tan', ordre: 12 }
+      ];
+      for (const p of newPartis) {
+        const existing = await getLocal(`SELECT ID FROM PARTIS_POLITIQUES WHERE CODE=?`, [p.code]);
+        if (!existing) {
+          await runLocal(`INSERT INTO PARTIS_POLITIQUES (CODE, NOM_PARTI, NOM_ARABE, SIGLE_ARABE, COULEUR_HEX, TETE_LISTE, ORDRE_AFFICHAGE) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [p.code, p.nom, p.nom_ar, p.sigle_ar, p.couleur, p.tete, p.ordre]);
+        }
       }
     }
   } catch (e) {

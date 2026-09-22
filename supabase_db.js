@@ -16,10 +16,30 @@ export function isSupabaseConfigured() {
 export async function initSupabaseDb() {
   if (!supabase) return false;
   console.log('⚡ Base de données Cloud Supabase active !');
+  ensurePartisSupabase();
   return true;
 }
 
+async function ensurePartisSupabase() {
+  if (!supabase) return;
+  try {
+    const newPartis = [
+      { code: 'UMD', nom_parti: 'Union Marocaine pour la Démocratie', nom_arabe: 'حزب الاتحاد المغربي للديمقراطية', sigle_arabe: 'اتحاد ديمقراطي', couleur_hex: '#D97706', tete_liste: 'Candidat UMD Tan-Tan', ordre_affichage: 11 },
+      { code: 'PE', nom_parti: 'Parti de l\'Espoir', nom_arabe: 'حزب الأمل', sigle_arabe: 'أمل', couleur_hex: '#059669', tete_liste: 'Candidat PE Tan-Tan', ordre_affichage: 12 }
+    ];
+    for (const p of newPartis) {
+      const { data } = await supabase.from('partis_politiques').select('id').eq('code', p.code).maybeSingle();
+      if (!data) {
+        await supabase.from('partis_politiques').insert(p);
+      }
+    }
+  } catch (e) {
+    console.error('Erreur auto-insert partis Supabase:', e);
+  }
+}
+
 export async function getPartisSupabase() {
+  await ensurePartisSupabase();
   const { data, error } = await supabase
     .from('partis_politiques')
     .select('*')
