@@ -518,12 +518,17 @@ export async function getVotesAggregation({ commune = '' } = {}) {
     let totalExprimes = 0;
     const pvIds = [];
 
+    let totalNuls = 0;
+    let totalBlancs = 0;
+
     bureaux.forEach(b => {
       totalInscrits += (b.nombre_inscrits || 0);
       if (b.has_pv && b.pv) {
         depouillesCount++;
         if (!b.pv.est_valide) invalidesCount++;
         totalVotants += (b.pv.nombre_votants || 0);
+        totalNuls += (b.pv.bulletins_nuls || 0);
+        totalBlancs += (b.pv.bulletins_blancs || 0);
         totalExprimes += (b.pv.suffrages_exprimes || 0);
         pvIds.push(b.pv.id);
       }
@@ -533,12 +538,23 @@ export async function getVotesAggregation({ commune = '' } = {}) {
     partis.forEach(p => { votesByPartyMap[p.id] = 0; });
 
     if (pvIds.length > 0) {
-      const { data: vRows } = await supabase.from('votes_partis').select('parti_id, nombre_voix').in('pv_id', pvIds);
-      if (vRows) {
-        vRows.forEach(v => {
-          votesByPartyMap[v.parti_id] = (votesByPartyMap[v.parti_id] || 0) + (v.nombre_voix || 0);
-        });
+      let vRows = [];
+      let from = 0;
+      const pageSize = 1000;
+      while (true) {
+        const { data: pageData, error } = await supabase
+          .from('votes_partis')
+          .select('parti_id, nombre_voix')
+          .in('pv_id', pvIds)
+          .range(from, from + pageSize - 1);
+        if (error || !pageData || pageData.length === 0) break;
+        vRows.push(...pageData);
+        if (pageData.length < pageSize) break;
+        from += pageSize;
       }
+      vRows.forEach(v => {
+        votesByPartyMap[v.parti_id] = (votesByPartyMap[v.parti_id] || 0) + (v.nombre_voix || 0);
+      });
     }
 
     let resultsByParty = partis.map(p => {
@@ -579,6 +595,8 @@ export async function getVotesAggregation({ commune = '' } = {}) {
       taux_depouillement: tauxDepouillement,
       total_inscrits: totalInscrits,
       total_votants: totalVotants,
+      total_nuls: totalNuls,
+      total_blancs: totalBlancs,
       total_exprimes: totalExprimes,
       taux_participation: tauxParticipation,
       results_by_party: resultsByParty
@@ -608,12 +626,16 @@ export async function getVotesAggregation({ commune = '' } = {}) {
 
   const validPvIds = [];
 
+  let totalNuls = 0;
+  let totalBlancs = 0;
   bureauxRows.forEach(b => {
     totalInscrits += (b.NOMBRE_INSCRITS || 0);
     if (b.pv_id) {
       depouillesCount++;
       if (b.EST_VALIDE === 0) invalidesCount++;
       totalVotants += (b.NOMBRE_VOTANTS || 0);
+      totalNuls += (b.BULLETINS_NULS || 0);
+      totalBlancs += (b.BULLETINS_BLANCS || 0);
       totalNulsBlancs += ((b.BULLETINS_NULS || 0) + (b.BULLETINS_BLANCS || 0));
       totalExprimes += (b.SUFFRAGES_EXPRIMES || 0);
       validPvIds.push(b.pv_id);

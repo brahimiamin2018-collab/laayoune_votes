@@ -64,11 +64,28 @@ export async function getBureauxSupabase(commune = '') {
   if (commune && commune !== 'ALL') {
     query = query.eq('commune', commune);
   }
-  const { data: bureaux, error: errB } = await query.order('commune').order('numero_bureau');
-  if (errB) throw errB;
+  
+  let bureaux = [];
+  let fromB = 0;
+  while (true) {
+    const { data: pageB, error: errB } = await query.order('commune').order('numero_bureau').range(fromB, fromB + 999);
+    if (errB) throw errB;
+    if (!pageB || pageB.length === 0) break;
+    bureaux.push(...pageB);
+    if (pageB.length < 1000) break;
+    fromB += 1000;
+  }
 
-  const { data: pvs, error: errP } = await supabase.from('pv_bureaux').select('*');
-  if (errP) throw errP;
+  let pvs = [];
+  let fromP = 0;
+  while (true) {
+    const { data: pageP, error: errP } = await supabase.from('pv_bureaux').select('*').range(fromP, fromP + 999);
+    if (errP) throw errP;
+    if (!pageP || pageP.length === 0) break;
+    pvs.push(...pageP);
+    if (pageP.length < 1000) break;
+    fromP += 1000;
+  }
 
   const pvMap = {};
   if (pvs) {
