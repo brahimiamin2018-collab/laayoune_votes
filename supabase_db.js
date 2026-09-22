@@ -98,22 +98,6 @@ export async function savePvSupabase({ bureau_id, votants, nuls, blancs, exprime
   let estValide = true;
   let anomalies = [];
 
-  if (numInscrits > 0 && numVotants > numInscrits) {
-    estValide = false;
-    anomalies.push(`Votants (${numVotants}) > Inscrits (${numInscrits})`);
-  }
-
-  const calcExprimes = Math.max(0, numVotants - (numNuls + numBlancs));
-  if (numExprimes !== calcExprimes) {
-    estValide = false;
-    anomalies.push(`Exprimés (${numExprimes}) != Votants - (Nuls+Blancs) (${calcExprimes})`);
-  }
-
-  if (totalPartis !== numExprimes) {
-    estValide = false;
-    anomalies.push(`Somme partis (${totalPartis}) != Exprimés (${numExprimes})`);
-  }
-
   const { data: existingPv } = await supabase.from('pv_bureaux').select('id').eq('bureau_id', bId).maybeSingle();
 
   let pvId = null;

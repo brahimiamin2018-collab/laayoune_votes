@@ -134,10 +134,6 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       numero_bureau: session.bureau_details.numero_bureau
     } : null);
 
-  const isExprimesMatch = numExprimes === calculatedExprimes && numVotants > 0;
-  const isPartisVotesMatch = totalVotesPartis === numExprimes && numExprimes > 0;
-  const isFullyValid = isExprimesMatch && isPartisVotesMatch;
-
   const handleAutoCalcExprimes = () => {
     if (isLocked) return;
     setExprimes(calculatedExprimes.toString());
@@ -179,13 +175,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
       });
 
       if (res.ok) {
-        const json = await res.json();
-        if (json.est_valide) {
-          setStatusMsg({ type: 'success', text: 'تم حفظ وتأكيد المحضر وإقفال إدخال البيانات لهذا المكتب بنجاح!' });
-          setIsLocked(true);
-        } else {
-          setStatusMsg({ type: 'warning', text: `تم حفظ المحضر مع ملاحظة: ${json.note_anomalie}` });
-        }
+        setStatusMsg({ type: 'success', text: 'تم حفظ وتأكيد المحضر وإقفال إدخال البيانات لهذا المكتب بنجاح!' });
+        setIsLocked(true);
         await loadInitialData();
         if (onSaveSuccess) onSaveSuccess();
       } else {
@@ -302,9 +293,7 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       isSelected
                         ? 'bg-sky-500/15 border-sky-500/50 text-white shadow-md shadow-sky-500/10'
                         : b.has_pv
-                        ? b.pv?.est_valide
-                          ? 'bg-slate-900/60 border-emerald-500/30 text-slate-300 hover:bg-slate-800'
-                          : 'bg-slate-900/60 border-rose-500/30 text-slate-300 hover:bg-slate-800'
+                        ? 'bg-slate-900/60 border-emerald-500/30 text-slate-300 hover:bg-slate-800'
                         : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:bg-slate-800'
                     }`}
                   >
@@ -320,12 +309,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
 
                     <div className="text-left flex-shrink-0">
                       {b.has_pv ? (
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          b.pv?.est_valide
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                            : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                        }`}>
-                          {b.pv?.est_valide ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          <CheckCircle2 className="w-3 h-3" />
                           {b.pv?.suffrages_exprimes} صوت
                         </span>
                       ) : (
@@ -386,15 +371,10 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       <Lock className="w-4 h-4 text-emerald-400" />
                       <span>محضر مقفل ومؤكد</span>
                     </div>
-                  ) : isFullyValid ? (
-                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold shadow-md shadow-emerald-500/10">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span>محضر مطابق</span>
-                    </div>
                   ) : (
-                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded-xl text-xs font-bold shadow-md shadow-amber-500/10">
-                      <AlertTriangle className="w-4 h-4 text-amber-400" />
-                      <span>في طور الإدخال</span>
+                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-sky-500/20 border border-sky-500/40 text-sky-300 rounded-xl text-xs font-bold shadow-md shadow-sky-500/10">
+                      <FileText className="w-4 h-4 text-sky-400" />
+                      <span>إدخال النتائج</span>
                     </div>
                   )}
                 </div>
@@ -505,29 +485,12 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                       className={`w-full px-3.5 py-2.5 rounded-xl font-bold text-sm focus:outline-none ${
                         isLocked
                           ? 'bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed'
-                          : isExprimesMatch ? 'bg-slate-950 border border-emerald-500/50 text-emerald-300' : 'bg-slate-950 border border-amber-500/50 text-amber-300'
+                          : 'bg-slate-950 border border-slate-800 text-white focus:border-sky-500'
                       }`}
                       required
                     />
                   </div>
                 </div>
-
-                {numVotants > 0 && (
-                  <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-[11px] flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-slate-400">
-                      التحقق : <strong>{numVotants} مصوت - ({numNuls} ملغاة + {numBlancs} بيضاء) = {calculatedExprimes} معبر عنها</strong>
-                    </span>
-                    {isExprimesMatch ? (
-                      <span className="text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> مجموع الأصوات المعبر عنها صحيح
-                      </span>
-                    ) : (
-                      <span className="text-amber-400 font-bold flex items-center gap-1">
-                        <AlertTriangle className="w-3.5 h-3.5" /> تفاوت بين المحسوب ({calculatedExprimes}) والمُدخل ({numExprimes})
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Step 2: Partis Votes */}
@@ -540,8 +503,8 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   
                   <div className="text-xs font-semibold">
                     <span className="text-slate-400">مجموع أصوات الأحزاب : </span>
-                    <span className={`font-extrabold ${isPartisVotesMatch ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {totalVotesPartis} / {numExprimes} معبر عنها
+                    <span className="font-extrabold text-sky-300">
+                      {totalVotesPartis} صوت
                     </span>
                   </div>
                 </div>
@@ -623,8 +586,6 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs shadow-lg transition ${
                       isLocked
                         ? 'bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed'
-                        : isFullyValid
-                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/20'
                         : 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-sky-500/20'
                     }`}
                   >

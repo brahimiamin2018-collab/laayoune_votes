@@ -443,15 +443,8 @@ export async function savePvResult({ bureau_id, votants = 0, nuls = 0, blancs = 
   });
 
   let anomalies = [];
-  if (expectedExprimes !== numExprimes) {
-    anomalies.push(`Incohérence: Suffrages Exprimés (${numExprimes}) != Votants (${numVotants}) - Nuls/Blancs (${numNuls + numBlancs})`);
-  }
-  if (totalVotesPartis !== numExprimes) {
-    anomalies.push(`Incohérence: Somme des voix des partis (${totalVotesPartis}) != Suffrages Exprimés (${numExprimes})`);
-  }
-
-  const estValide = (anomalies.length === 0) ? 1 : 0;
-  const noteAnomalie = anomalies.join(' | ');
+  const estValide = 1;
+  const noteAnomalie = '';
   const nowStr = new Date().toISOString();
 
   let pv = await getLocal(`SELECT ID FROM PV_BUREAUX WHERE BUREAU_ID=?`, [bureau_id]);
