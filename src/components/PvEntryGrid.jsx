@@ -537,38 +537,11 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                   
                   <div className="text-xs font-semibold flex items-center gap-2">
                     <span className="text-slate-400">مجموع أصوات الأحزاب : </span>
-                    <span className={`font-black px-2.5 py-0.5 rounded-lg border transition ${
-                      numExprimes === 0
-                        ? 'bg-slate-900 border-slate-800 text-slate-400'
-                        : isPartisVotesMatch
-                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
-                        : 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                    }`}>
-                      {totalVotesPartis} / {numExprimes} معبر عنها
+                    <span className="font-black px-2.5 py-0.5 rounded-lg border bg-sky-500/15 border-sky-500/30 text-sky-200">
+                      {totalVotesPartis} صوت
                     </span>
                   </div>
                 </div>
-
-                {numExprimes > 0 && (
-                  <div className={`p-2.5 rounded-xl border text-[11px] font-bold flex items-center justify-between gap-2 transition ${
-                    isPartisVotesMatch
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                      : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      {isPartisVotesMatch ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      ) : (
-                        <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                      )}
-                      <span>
-                        {isPartisVotesMatch
-                          ? `مجموع أصوات الأحزاب (${totalVotesPartis}) مطابق تماماً للأصوات المعبر عنها (${numExprimes}).`
-                          : `تفاوت : مجموع أصوات الأحزاب (${totalVotesPartis}) لا يساوي الأصوات المعبر عنها (${numExprimes}). الفرق: ${Math.abs(totalVotesPartis - numExprimes)} صوت.`}
-                      </span>
-                    </div>
-                  </div>
-                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {partis.map((p) => {
