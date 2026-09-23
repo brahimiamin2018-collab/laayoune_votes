@@ -275,9 +275,9 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
                 }}
                 className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
               >
-                <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (175 مكتب تصويت)</option>
+                <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (176 مكتب تصويت)</option>
                 <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (82 مكتب تصويت)</option>
-                <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
+                <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (19 مكتب تصويت)</option>
                 <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
                 <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
                 <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
