@@ -171,14 +171,13 @@ export async function savePvSupabase({ bureau_id, votants, nuls, blancs, exprime
   }
 
   if (votes_by_parti && pvId) {
-    for (const [partiIdStr, val] of Object.entries(votes_by_parti)) {
-      const pId = parseInt(partiIdStr);
-      const voix = parseInt(val) || 0;
-      await supabase.from('votes_partis').upsert({
-        pv_id: pvId,
-        parti_id: pId,
-        nombre_voix: voix
-      }, { onConflict: 'pv_id,parti_id' });
+    const rows = Object.entries(votes_by_parti).map(([partiIdStr, val]) => ({
+      pv_id: pvId,
+      parti_id: parseInt(partiIdStr),
+      nombre_voix: parseInt(val) || 0
+    }));
+    if (rows.length > 0) {
+      await supabase.from('votes_partis').upsert(rows, { onConflict: 'pv_id,parti_id' });
     }
   }
 
