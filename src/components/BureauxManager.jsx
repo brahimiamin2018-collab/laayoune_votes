@@ -147,12 +147,25 @@ export default function BureauxManager() {
     reader.readAsBinaryString(file);
   };
 
-  const filteredBureaux = bureaux.filter(b =>
-    b.code_bureau.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.centre_vote.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.commune.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.numero_bureau.toString().includes(searchQuery)
-  );
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
+
+  const filteredBureaux = bureaux.filter(b => {
+    const matchesSearch = 
+      b.code_bureau.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.centre_vote.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.commune.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.numero_bureau.toString().includes(searchQuery);
+
+    const matchesStatus = 
+      selectedStatus === 'ALL' ? true :
+      selectedStatus === 'DEPOUILLE' ? b.has_pv :
+      selectedStatus === 'NON_DEPOUILLE' ? !b.has_pv : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const depouillesCount = bureaux.filter(b => b.has_pv).length;
+  const nonDepouillesCount = bureaux.filter(b => !b.has_pv).length;
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -185,6 +198,20 @@ export default function BureauxManager() {
               <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
               <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
               <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-slate-400">حالة الفرز :</span>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
+            >
+              <option value="ALL" className="bg-slate-900 text-white">جميع المكاتب ({bureaux.length})</option>
+              <option value="DEPOUILLE" className="bg-slate-900 text-emerald-300">المكاتب المفروزة ({depouillesCount})</option>
+              <option value="NON_DEPOUILLE" className="bg-slate-900 text-amber-300">المكاتب الغير مفروزة ({nonDepouillesCount})</option>
             </select>
           </div>
 

@@ -228,11 +228,24 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
     }
   };
 
-  const filteredBureauxList = bureaux.filter(b => 
-    b.code_bureau.toLowerCase().includes(searchBureau.toLowerCase()) ||
-    b.centre_vote.toLowerCase().includes(searchBureau.toLowerCase()) ||
-    b.numero_bureau.toString().includes(searchBureau)
-  );
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
+
+  const filteredBureauxList = bureaux.filter(b => {
+    const matchesSearch = 
+      b.code_bureau.toLowerCase().includes(searchBureau.toLowerCase()) ||
+      b.centre_vote.toLowerCase().includes(searchBureau.toLowerCase()) ||
+      b.numero_bureau.toString().includes(searchBureau);
+
+    const matchesStatus = 
+      selectedStatus === 'ALL' ? true :
+      selectedStatus === 'DEPOUILLE' ? b.has_pv :
+      selectedStatus === 'NON_DEPOUILLE' ? !b.has_pv : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const depouillesCount = bureaux.filter(b => b.has_pv).length;
+  const nonDepouillesCount = bureaux.filter(b => !b.has_pv).length;
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -250,26 +263,42 @@ export default function PvEntryGrid({ assignedBureauId, session, onSaveSuccess }
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
-            <Building2 className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-slate-400">الجماعة :</span>
-            <select
-              value={selectedCommune}
-              onChange={(e) => {
-                setSelectedCommune(e.target.value);
-                setSelectedBureauId('');
-              }}
-              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
-            >
-              <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (175 مكتب تصويت)</option>
-              <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (82 مكتب تصويت)</option>
-              <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
-              <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
-              <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
-              <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
-              <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
-              <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
-            </select>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+              <Building2 className="w-3.5 h-3.5 text-sky-400" />
+              <span className="text-slate-400">الجماعة :</span>
+              <select
+                value={selectedCommune}
+                onChange={(e) => {
+                  setSelectedCommune(e.target.value);
+                  setSelectedBureauId('');
+                }}
+                className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
+              >
+                <option value="ALL" className="bg-slate-900 text-white">جميع الجماعات (175 مكتب تصويت)</option>
+                <option value="Tan-Tan" className="bg-slate-900 text-white">طانطان (82 مكتب تصويت)</option>
+                <option value="El Ouatia" className="bg-slate-900 text-white">الوطية (18 مكتب تصويت)</option>
+                <option value="Ben Khlil" className="bg-slate-900 text-white">بن خليل (15 مكتب تصويت)</option>
+                <option value="Abteh" className="bg-slate-900 text-white">أبطيح (15 مكتب تصويت)</option>
+                <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
+                <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
+                <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-slate-400">حالة الفرز :</span>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer text-xs"
+              >
+                <option value="ALL" className="bg-slate-900 text-white">جميع المكاتب ({bureaux.length})</option>
+                <option value="DEPOUILLE" className="bg-slate-900 text-emerald-300">المكاتب المفروزة ({depouillesCount})</option>
+                <option value="NON_DEPOUILLE" className="bg-slate-900 text-amber-300">المكاتب الغير مفروزة ({nonDepouillesCount})</option>
+              </select>
+            </div>
           </div>
         </div>
       )}
