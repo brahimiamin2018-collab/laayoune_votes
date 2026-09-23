@@ -6,32 +6,20 @@ import PartySymbol from './PartySymbol';
 
 export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
   const [data, setData] = useState(null);
-  const [bureaux, setBureaux] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCommune, setSelectedCommune] = useState('ALL');
-  const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, DEPOUILLE, NON_DEPOUILLE
   const [searchFilter, setSearchFilter] = useState('');
-  const [searchBureauQuery, setSearchBureauQuery] = useState('');
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const urlTotaux = selectedCommune && selectedCommune !== 'ALL' 
+      const url = selectedCommune && selectedCommune !== 'ALL' 
         ? `/api/depouillement/totaux?commune=${encodeURIComponent(selectedCommune)}`
         : '/api/depouillement/totaux';
-      const resT = await fetch(urlTotaux);
-      if (resT.ok) {
-        const json = await resT.json();
+      const res = await fetch(url);
+      if (res.ok) {
+        const json = await res.json();
         setData(json);
-      }
-
-      const urlBureaux = selectedCommune && selectedCommune !== 'ALL'
-        ? `/api/depouillement/bureaux?commune=${encodeURIComponent(selectedCommune)}`
-        : '/api/depouillement/bureaux';
-      const resB = await fetch(urlBureaux);
-      if (resB.ok) {
-        const bureauxJson = await resB.json();
-        setBureaux(bureauxJson);
       }
     } catch (err) {
       console.error('Erreur chargement totaux:', err);
@@ -133,20 +121,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
               <option value="Chbika" className="bg-slate-900 text-white">الشبيكة (15 مكتب تصويت)</option>
               <option value="Tilemzoune" className="bg-slate-900 text-white">تلمزون (15 مكتب تصويت)</option>
               <option value="Msied" className="bg-slate-900 text-white">لمسيد (15 مكتب تصويت)</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2 bg-slate-950 px-3.5 py-2 rounded-xl border-2 border-slate-700 text-xs sm:text-sm">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span className="text-slate-200 font-bold">حالة الفرز :</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-transparent text-white font-extrabold focus:outline-none cursor-pointer text-xs sm:text-sm"
-            >
-              <option value="ALL" className="bg-slate-900 text-white">جميع المكاتب ({bureaux.length})</option>
-              <option value="DEPOUILLE" className="bg-slate-900 text-emerald-300">المكاتب المفروزة ({bureaux.filter(b=>b.has_pv).length})</option>
-              <option value="NON_DEPOUILLE" className="bg-slate-900 text-amber-300">المكاتب الغير مفروزة ({bureaux.filter(b=>!b.has_pv).length})</option>
             </select>
           </div>
 
@@ -304,116 +278,6 @@ export default function LiveAggregationDashboard({ onSelectPvForEdit }) {
           </table>
         </div>
 
-      </div>
-
-      {/* Bureaux Status Monitoring Section - Filterable Dépouillés vs Non-dépouillés */}
-      <div className="glass-panel p-4 sm:p-6 rounded-2xl border-2 border-slate-700 space-y-4 shadow-2xl bg-slate-900">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-sky-400" />
-            <h3 className="text-base sm:text-lg font-bold text-white">
-              حالة مكاتب التصويت (المفروزة والغير مفروزة)
-            </h3>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
-            <button
-              onClick={() => setStatusFilter('ALL')}
-              className={`px-3 py-1.5 rounded-xl border transition ${
-                statusFilter === 'ALL'
-                  ? 'bg-sky-500/20 text-sky-300 border-sky-400'
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-800'
-              }`}
-            >
-              جميع المكاتب ({bureaux.length})
-            </button>
-            <button
-              onClick={() => setStatusFilter('DEPOUILLE')}
-              className={`px-3 py-1.5 rounded-xl border transition ${
-                statusFilter === 'DEPOUILLE'
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400'
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-800'
-              }`}
-            >
-              المكاتب المفروزة ({bureaux.filter(b=>b.has_pv).length})
-            </button>
-            <button
-              onClick={() => setStatusFilter('NON_DEPOUILLE')}
-              className={`px-3 py-1.5 rounded-xl border transition ${
-                statusFilter === 'NON_DEPOUILLE'
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-400'
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-800'
-              }`}
-            >
-              المكاتب الغير مفروزة ({bureaux.filter(b=>!b.has_pv).length})
-            </button>
-          </div>
-        </div>
-
-        {/* Search Input for Bureaux */}
-        <div className="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
-          <Filter className="w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="البحث باسم مركز التصويت، رقم المكتب، الجماعة..."
-            value={searchBureauQuery}
-            onChange={(e) => setSearchBureauQuery(e.target.value)}
-            className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
-          />
-        </div>
-
-        {/* Bureaux Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[420px] overflow-y-auto pl-1">
-          {bureaux
-            .filter(b => {
-              const matchesStatus = 
-                statusFilter === 'ALL' ? true :
-                statusFilter === 'DEPOUILLE' ? b.has_pv :
-                statusFilter === 'NON_DEPOUILLE' ? !b.has_pv : true;
-
-              const matchesSearch = 
-                !searchBureauQuery ||
-                b.code_bureau.toLowerCase().includes(searchBureauQuery.toLowerCase()) ||
-                b.centre_vote.toLowerCase().includes(searchBureauQuery.toLowerCase()) ||
-                b.commune.toLowerCase().includes(searchBureauQuery.toLowerCase()) ||
-                b.numero_bureau.toString().includes(searchBureauQuery);
-
-              return matchesStatus && matchesSearch;
-            })
-            .map(b => (
-              <div
-                key={b.id}
-                className={`p-3 rounded-xl border flex items-center justify-between text-xs transition ${
-                  b.has_pv
-                    ? 'bg-slate-950/80 border-emerald-500/30'
-                    : 'bg-slate-950/40 border-amber-500/20'
-                }`}
-              >
-                <div>
-                  <div className="font-extrabold text-white flex items-center gap-2">
-                    <span className="text-sky-300">{b.code_bureau}</span>
-                    <span>مكتب {b.numero_bureau}</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400 truncate max-w-[200px]">
-                    {b.centre_vote} ({b.commune})
-                  </div>
-                </div>
-
-                <div>
-                  {b.has_pv ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                      <CheckCircle2 className="w-3 h-3" />
-                      تم الفرز
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                      في انتظار الفرز
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
       </div>
 
     </div>
