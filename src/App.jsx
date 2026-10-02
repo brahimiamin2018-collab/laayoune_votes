@@ -19,6 +19,9 @@ export default function App() {
 
   if (!isLocal) {
     document.title = "404: NOT_FOUND";
+    const favicons = document.querySelectorAll("link[rel*='icon']");
+    favicons.forEach(el => el.setAttribute("href", "data:image/x-icon;,"));
+
     return (
       <div className="fixed inset-0 bg-white text-black font-sans flex flex-col items-center justify-center p-6 text-center z-[999999]">
         <div className="max-w-md w-full">

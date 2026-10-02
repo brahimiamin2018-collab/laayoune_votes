@@ -49,6 +49,7 @@ app.use((req, res, next) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>404: NOT_FOUND</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
   <style>
     body {
       background-color: #ffffff;
