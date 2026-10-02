@@ -36,6 +36,79 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// Block non-local / Vercel cloud requests with fake Vercel 404
+app.use((req, res, next) => {
+  const host = req.headers.host || '';
+  const isVercel = !!process.env.VERCEL;
+  const isLocal = host.includes('localhost') || host.includes('127.0.0.1') || host.startsWith('192.168.') || host.startsWith('10.');
+
+  if (isVercel || !isLocal) {
+    return res.status(404).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404: DEPLOYMENT_NOT_FOUND</title>
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: #000000;
+    }
+    p {
+      font-size: 14px;
+      color: #666666;
+      margin: 0 0 24px 0;
+      line-height: 1.5;
+    }
+    .footer {
+      border-top: 1px solid #eaeaea;
+      padding-top: 24px;
+      font-size: 12px;
+      color: #888888;
+      font-family: monospace;
+      text-align: center;
+    }
+    .code {
+      font-weight: bold;
+      color: #444444;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>This page doesn’t exist</h1>
+    <p>It may have been moved, removed, or never existed.</p>
+    <div class="footer">
+      <div class="code">404 DEPLOYMENT_NOT_FOUND</div>
+      <div>cdg1::6cl2r-1790963931287-0d797d55c6dc</div>
+    </div>
+  </div>
+</body>
+</html>`);
+  }
+  next();
+});
+
 // Init SQLite DB
 initDb().catch(console.error);
 

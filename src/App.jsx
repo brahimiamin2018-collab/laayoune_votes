@@ -9,6 +9,35 @@ import LoginModal from './components/LoginModal';
 import { ShieldCheck } from 'lucide-react';
 
 export default function App() {
+  const hostname = window.location.hostname;
+  const isLocal = 
+    hostname === 'localhost' || 
+    hostname === '127.0.0.1' || 
+    hostname.startsWith('192.168.') || 
+    hostname.startsWith('10.') || 
+    hostname.endsWith('.local');
+
+  if (!isLocal) {
+    return (
+      <div className="fixed inset-0 bg-white text-black font-sans flex flex-col items-center justify-center p-6 text-center z-[999999]">
+        <div className="max-w-md w-full">
+          <h1 className="text-2xl font-semibold text-black mb-2 tracking-tight">
+            This page doesn’t exist
+          </h1>
+          <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+            It may have been moved, removed, or never existed.
+          </p>
+          <div className="border-t border-gray-200 pt-6 text-xs text-gray-400 font-mono">
+            <div className="font-bold text-gray-700 mb-1">
+              404 DEPLOYMENT_NOT_FOUND
+            </div>
+            <div>cdg1::6cl2r-1790963931287-0d797d55c6dc</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [session, setSession] = useState(() => {
     const saved = localStorage.getItem('tantan_votes_session');
     if (saved) {
