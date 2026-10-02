@@ -18,6 +18,7 @@ export default function App() {
     hostname.endsWith('.local');
 
   if (!isLocal) {
+    document.title = "404: NOT_FOUND";
     return (
       <div className="fixed inset-0 bg-white text-black font-sans flex flex-col items-center justify-center p-6 text-center z-[999999]">
         <div className="max-w-md w-full">

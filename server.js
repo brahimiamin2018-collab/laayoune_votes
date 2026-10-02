@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>404: DEPLOYMENT_NOT_FOUND</title>
+  <title>404: NOT_FOUND</title>
   <style>
     body {
       background-color: #ffffff;
